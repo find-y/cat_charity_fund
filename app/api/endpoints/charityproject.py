@@ -44,3 +44,22 @@ async def get_all_charity_projects(
 ):
     charity_projects = await charity_project_crud.get_multi(session)
     return charity_projects
+
+
+@router.delete(
+    '/{charity_project_id}',
+    response_model=CharityProjectDB
+)
+async def delete_reservation(
+    charity_project_id: int,
+    session: AsyncSession = Depends(get_async_session),
+    # user: User = Depends(current_user),
+):
+    # """Для суперюзеров или создателей объекта бронирования"""
+    # charity_project = await check_charity_project_before_edit(
+    #     charity_project_id, session, user)
+    charity_project = await charity_project_crud.get(
+        obj_id=charity_project_id, session=session)
+    charity_project = await charity_project_crud.remove(
+        charity_project, session)
+    return charity_project
