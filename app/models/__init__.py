@@ -1,3 +1,3 @@
-# from .donation import MeetingRoom
-# from .charityproject import Reservation
+from .donation import Donation
+from .charityproject import CharityProject
 # from .user import User
