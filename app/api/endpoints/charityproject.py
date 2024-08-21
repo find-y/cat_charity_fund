@@ -50,7 +50,7 @@ async def get_all_charity_projects(
     '/{charity_project_id}',
     response_model=CharityProjectDB
 )
-async def delete_reservation(
+async def delete_charity_project(
     charity_project_id: int,
     session: AsyncSession = Depends(get_async_session),
     # user: User = Depends(current_user),
