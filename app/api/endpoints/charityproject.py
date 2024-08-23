@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
-# from app.core.user import current_superuser
+from app.core.user import current_superuser
 
 from app.crud.charityproject import charity_project_crud
 from app.crud.donation import donation_crud
@@ -19,13 +19,13 @@ router = APIRouter()
     '/',
     response_model=CharityProjectDB,
     response_model_exclude_none=True,
-    # dependencies=[Depends(current_superuser)],
+    dependencies=[Depends(current_superuser)],
 )
 async def create_new_charity_project(
         charity_project: CharityProjectCreate,
         session: AsyncSession = Depends(get_async_session),
 ):
-    # """Только для суперюзеров."""
+    """Только для суперюзеров."""
     # # Выносим проверку дубликата имени в отдельную корутину.
     # # Если такое имя уже существует, то будет вызвана ошибка HTTPException
     # # и обработка запроса остановится.
@@ -46,16 +46,16 @@ async def get_all_charity_projects(
     return charity_projects
 
 
-@router.delete(
+@router.delete( #добавить проверку, что нет денег
     '/{charity_project_id}',
-    response_model=CharityProjectDB
+    response_model=CharityProjectDB,
+    dependencies=[Depends(current_superuser)],
 )
 async def delete_charity_project(
     charity_project_id: int,
     session: AsyncSession = Depends(get_async_session),
-    # user: User = Depends(current_user),
 ):
-    # """Для суперюзеров или создателей объекта бронирования"""
+    """Только для суперюзеров"""
     charity_project = await object_exists(
         charity_project_id, charity_project_crud, session) # , user
     # charity_project = await charity_project_crud.get(
@@ -69,14 +69,14 @@ async def delete_charity_project(
     '/{meeting_room_id}',
     response_model=CharityProjectDB,
     response_model_exclude_none=True,
-    # dependencies=[Depends(current_superuser)],
+    dependencies=[Depends(current_superuser)],
 )
-async def partially_update_charity_project(
+async def partially_update_charity_project( #добавить проверку, что сумма не меньше внесенной
         charity_project_id: int,
         obj_in: CharityProjectUpdate,
         session: AsyncSession = Depends(get_async_session),
 ):
-    # """Только для суперюзеров."""
+    """Только для суперюзеров."""
     charity_project = await object_exists(
         charity_project_id, charity_project_crud, session)
 

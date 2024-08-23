@@ -32,6 +32,8 @@ class DonationCreate(DonationBase):
 
 class DonationDB(DonationBase):
     id: int
+    charity_project_id: int
+    user_id: Optional[int]
 
     class Config:
         orm_mode = True

@@ -4,7 +4,9 @@ from sqlalchemy.sql import func
 from app.core.db import Base
 
 class Donation(Base):   
-    # user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    charity_project_id = Column(
+        Integer, ForeignKey('charityproject.id'), nullable=False)
     comment = Column(Text)
     full_amount = Column(Integer, nullable=False)
     invested_amount = Column(Integer, default=0, nullable=False)
