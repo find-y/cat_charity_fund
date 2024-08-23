@@ -2,10 +2,11 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.meeting_room import meeting_room_crud
-from app.models import MeetingRoom, Reservation, User
+# from app.crud.charityproject import charity_project_crud
+# from app.crud.donation import donation_crud
 
-from app.crud.reservation import reservation_crud
+from app.models import CharityProject, Donation #, User
+
 
 
 # async def check_name_duplicate(
@@ -44,22 +45,23 @@ from app.crud.reservation import reservation_crud
 #                 "reservations": str(reservations)})
 
 
-async def check_reservation_before_edit(
-        reservation_id: int,
+async def object_exists(
+        id: int,
+        obj_crud,
         session: AsyncSession,
-        user: User,
-) -> Reservation:
-    """проверяет, существует ли запрошенный объект бронирования"""
-    reservation = await reservation_crud.get(
-        obj_id=reservation_id, session=session)
-    if not reservation:
+        # user: User,
+) -> CharityProject:
+    """проверяет, существует ли запрошенный объект"""
+    obj = await obj_crud.get(
+        obj_id=id, session=session)
+    if not obj:
         raise HTTPException(
             status_code=404,
-            detail='Бронь не найдена!'
+            detail='Объект не найден!'
         )
-    if reservation.user_id != user.id and not user.is_superuser:
-        raise HTTPException(
-            status_code=403,
-            detail='Невозможно редактировать или удалить чужую бронь!'
-        )
-    return reservation
+    # if reservation.user_id != user.id and not user.is_superuser:
+    #     raise HTTPException(
+    #         status_code=403,
+    #         detail='Невозможно редактировать или удалить чужую бронь!'
+    #     )
+    return obj

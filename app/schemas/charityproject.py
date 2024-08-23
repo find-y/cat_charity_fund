@@ -34,9 +34,16 @@ class CharityProjectCreate(CharityProjectBase):
     full_amount: int = Field(...)
     # create_date: datetime = Field(...)
 
-
 # class CharityProjectUpdate(CharityProjectBase):
 #     pass
+
+class CharityProjectUpdate(CharityProjectBase):
+    # @validator('name')
+    # def name_cannot_be_null(cls, value):
+    #     if value is None:
+    #         raise ValueError('Имя переговорки не может быть пустым!')
+    #     return value
+    pass
 
 
 class CharityProjectDB(CharityProjectCreate):

@@ -7,7 +7,7 @@ from app.crud.base import CRUDBase
 from app.models.charityproject import CharityProject
 
 
-class CRUDMeetingRoom(CRUDBase):
+class CRUDCharityProject(CRUDBase):
     pass
 
-charity_project_crud = CRUDMeetingRoom(CharityProject)
+charity_project_crud = CRUDCharityProject(CharityProject)
