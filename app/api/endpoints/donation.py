@@ -9,7 +9,7 @@ from app.models import User
 
 from app.crud.donation import donation_crud
 from app.schemas.donation import (
-    DonationBase, DonationCreate, DonationDB,
+    DonationBase, DonationCreate, DonationDB, DonationUser
 )
 
 router = APIRouter()
@@ -44,7 +44,7 @@ async def get_all_donations(
 
 # @router.get(
 #     '/my',
-#     response_model=list[DonationDB],
+#     response_model=list[DonationUser],
 #     response_model_exclude={'user_id'},
 # )
 # async def get_my_donations(
@@ -52,7 +52,7 @@ async def get_all_donations(
 #     user: User = Depends(current_user)
 # ):
 #     """Получает список всех бронирований для текущего пользователя."""
-#     reservations = await donation_crud.get_by_user(
+#     donations = await donation_crud.get_by_user(
 #         session=session, user=user
 #     )
-#     return reservations
+#     return donations

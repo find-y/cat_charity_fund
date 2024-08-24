@@ -16,24 +16,26 @@ class DonationBase(BaseModel):
     full_amount: Optional[int]
     invested_amount: Optional[int]
     fully_invested: Optional[int]
-    # create_date: Optional[datetime]
     close_date: Optional[datetime]
 
 
 class DonationCreate(DonationBase):
-    # name: str = Field(..., min_length=1, max_length=100)
     full_amount: int = Field(...)
-    # create_date: int = Field(...)
-
-
-# class CharityProjectUpdate(CharityProjectBase):
-#     pass
 
 
 class DonationDB(DonationBase):
     id: int
-    charity_project_id: int
-    user_id: Optional[int]
+    # user_id: Optional[int]
 
     class Config:
         orm_mode = True
+
+
+# class DonationUser(DonationBase):
+#     id: int
+#     comment: Optional[str]
+#     full_amount: int
+#     create_date: datetime
+
+#     class Config:
+#         orm_mode = True
