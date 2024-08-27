@@ -36,6 +36,7 @@ class CRUDBase:
             session: AsyncSession,
             user: Optional[User] = None
     ):
+        print('aaaaaa')
         obj_in_data = obj_in.dict()
         if user is not None:
             # ...то дополнить словарь для создания модели.

@@ -11,14 +11,16 @@ from app.schemas.charityproject import (
     CharityProjectBase, CharityProjectCreate, CharityProjectDB, CharityProjectUpdate
 )
 # from app.schemas.donation import ReservationDB
-from app.api.validators import object_exists #check_name_duplicate, check_meeting_room_exists
+from app.api.validators import object_exists  #check_name_duplicate, check_meeting_room_exists
 
 router = APIRouter()
+
 
 @router.post(
     '/',
     response_model=CharityProjectDB,
     response_model_exclude_none=True,
+    response_model_exclude_unset=True,  # не убирает из примеров
     dependencies=[Depends(current_superuser)],
 )
 async def create_new_charity_project(
