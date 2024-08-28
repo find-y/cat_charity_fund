@@ -22,10 +22,10 @@ class CharityProjectBase(BaseModel):
     description: Optional[str]
     full_amount: Optional[int]
 
-    invested_amount: Optional[int]  #= Field(None, example="10")
-    fully_invested: Optional[int]  #= Field(None)
-    create_date: Optional[datetime] ##
-    close_date: Optional[datetime] = Field(None) # не убирает из примеров
+    # invested_amount: Optional[int]  #= Field(None, example="10")
+    # fully_invested: Optional[int]  #= Field(None)
+    # create_date: Optional[datetime] ##
+    # close_date: Optional[datetime] = Field(None) # не убирает из примеров
 
     class Config:
         extra = Extra.forbid
@@ -41,16 +41,32 @@ class CharityProjectCreate(CharityProjectBase):
 #     pass
 
 
+class CharityProjectResponse(CharityProjectCreate):
+    invested_amount: Optional[int]  #= Field(None, example="10")
+    fully_invested: Optional[int]  #= Field(None)
+    create_date: Optional[datetime] ##
+    close_date: Optional[datetime] #= Field(None) # не убирает из примеров
+
+    class Config:
+        orm_mode = True
+
+
 class CharityProjectUpdate(CharityProjectBase):
     # @validator('name')
     # def name_cannot_be_null(cls, value):
     #     if value is None:
     #         raise ValueError('Имя переговорки не может быть пустым!')
     #     return value
+
+    # invested_amount: Optional[int]  #= Field(None, example="10")
+    # fully_invested: Optional[int]  #= Field(None)
+    # create_date: Optional[datetime] ##
+    # close_date: Optional[datetime] = Field(None) # не убирает из примеров
+
     pass
 
 
-class CharityProjectDB(CharityProjectCreate):
+class CharityProjectDB(CharityProjectResponse):
     id: int
 
     class Config:

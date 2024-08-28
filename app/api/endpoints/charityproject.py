@@ -8,7 +8,11 @@ from app.core.user import current_superuser
 from app.crud.charityproject import charity_project_crud
 from app.crud.donation import donation_crud
 from app.schemas.charityproject import (
-    CharityProjectBase, CharityProjectCreate, CharityProjectDB, CharityProjectUpdate
+    CharityProjectBase,
+    CharityProjectCreate,
+    CharityProjectDB,
+    CharityProjectUpdate,
+    CharityProjectResponse
 )
 # from app.schemas.donation import ReservationDB
 from app.api.validators import object_exists  #check_name_duplicate, check_meeting_room_exists
@@ -19,8 +23,8 @@ router = APIRouter()
 @router.post(
     '/',
     response_model=CharityProjectDB,
-    response_model_exclude_none=True,
-    response_model_exclude_unset=True,  # не убирает из примеров
+    # response_model_exclude_none=True,
+    # response_model_exclude_unset=True,  # не убирает из примеров
     dependencies=[Depends(current_superuser)],
 )
 async def create_new_charity_project(
@@ -39,7 +43,7 @@ async def create_new_charity_project(
 @router.get(
     '/',
     response_model=list[CharityProjectDB],
-    response_model_exclude_none=True,
+    # response_model_exclude_none=True,
 )
 async def get_all_charity_projects(
         session: AsyncSession = Depends(get_async_session),
@@ -48,7 +52,7 @@ async def get_all_charity_projects(
     return charity_projects
 
 
-@router.delete( #добавить проверку, что нет денег
+@router.delete(  #добавить проверку, что нет денег
     '/{charity_project_id}',
     response_model=CharityProjectDB,
     dependencies=[Depends(current_superuser)],
@@ -73,7 +77,7 @@ async def delete_charity_project(
     response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)],
 )
-async def partially_update_charity_project( #добавить проверку, что сумма не меньше внесенной
+async def partially_update_charity_project(  #добавить проверку, что сумма не меньше внесенной
         charity_project_id: int,
         obj_in: CharityProjectUpdate,
         session: AsyncSession = Depends(get_async_session),

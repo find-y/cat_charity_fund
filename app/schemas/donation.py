@@ -14,10 +14,10 @@ class DonationBase(BaseModel):
     # close_date = Column(DateTime)
     comment: Optional[str]
     full_amount: Optional[int]
-    invested_amount: Optional[int]
-    fully_invested: Optional[int]
-    create_date: Optional[datetime] ##
-    close_date: Optional[datetime]
+    # invested_amount: Optional[int]
+    # fully_invested: Optional[int]
+    # create_date: Optional[datetime]  ##
+    # close_date: Optional[datetime]
 
     class Config:
         extra = Extra.forbid
@@ -27,7 +27,17 @@ class DonationCreate(DonationBase):
     full_amount: int = Field(...)
 
 
-class DonationDB(DonationBase):
+class DonationResponse(DonationCreate):
+    invested_amount: Optional[int]  #= Field(None, example="10")
+    fully_invested: Optional[int]  #= Field(None)
+    create_date: Optional[datetime]  ##
+    close_date: Optional[datetime] #= Field(None) # не убирает из примеров
+
+    class Config:
+        orm_mode = True
+
+
+class DonationDB(DonationResponse):
     id: int
     user_id: Optional[int]
 
