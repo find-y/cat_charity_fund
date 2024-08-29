@@ -20,6 +20,30 @@ async def check_name_duplicate(
         )
 
 
+def invested_amount_zero(
+        obj: int,
+) -> CharityProject:
+    """проверяет, что не было донатов в проект"""
+    if obj.invested_amount != 0:
+        raise HTTPException(
+            status_code=400,
+            detail='В проект были внесены средства, не подлежит удалению!'
+        )
+    print('денег нет') #######
+
+
+def is_opened(
+        obj: int,
+) -> CharityProject:
+    """проверяет, что проект не закрыт"""
+    if obj.close_date:
+        raise HTTPException(
+            status_code=400,
+            detail='Проект закрыт, не подлежит удалению!'
+        ) # в документации такое сообщение не прописано
+    print('открыт') ############
+
+
 # async def check_meeting_room_exists(
 #         meeting_room_id: int,
 #         session: AsyncSession,
@@ -44,26 +68,26 @@ async def check_name_duplicate(
 #                 "reservations": str(reservations)})
 
 
-async def object_exists(
-        id: int,
-        obj_crud,
-        session: AsyncSession,
-        # user: User,
-) -> CharityProject:
-    """проверяет, существует ли запрошенный объект"""
-    obj = await obj_crud.get(
-        obj_id=id, session=session)
-    if not obj:
-        raise HTTPException(
-            status_code=404,
-            detail='Объект не найден!'
-        )
-    # if reservation.user_id != user.id and not user.is_superuser:
-    #     raise HTTPException(
-    #         status_code=403,
-    #         detail='Невозможно редактировать или удалить чужую бронь!'
-    #     )
-    return obj
+# async def object_exists(
+#         id: int,
+#         obj_crud,
+#         session: AsyncSession,
+#         # user: User,
+# ) -> CharityProject:
+#     """проверяет, существует ли запрошенный объект"""
+#     obj = await obj_crud.get(
+#         obj_id=id, session=session)
+#     if not obj:
+#         raise HTTPException(
+#             status_code=404,
+#             detail='Объект не найден!'
+#         )
+#     # if reservation.user_id != user.id and not user.is_superuser:
+#     #     raise HTTPException(
+#     #         status_code=403,
+#     #         detail='Невозможно редактировать или удалить чужую бронь!'
+#     #     )
+#     return obj
 
 # async def invested_amount_zero(
 #         id: int,
@@ -79,31 +103,3 @@ async def object_exists(
 #             status_code=400,
 #             detail='В проект были внесены средства, не подлежит удалению!'
 #         )
-
-
-async def invested_amount_zero(
-        obj: int,
-        session: AsyncSession,
-        # user: User,
-) -> CharityProject:
-    """проверяет, что не было донатов в проект"""
-    if obj.invested_amount != 0:
-        raise HTTPException(
-            status_code=400,
-            detail='В проект были внесены средства, не подлежит удалению!'
-        )
-
-
-async def is_opened(
-        obj: int,
-        session: AsyncSession,
-        # user: User,
-) -> CharityProject:
-    """проверяет, что проект не закрыт"""
-    # obj = await obj_crud.get(
-    #     obj_id=id, session=session)
-    if obj.close_date:
-        raise HTTPException(
-            status_code=400,
-            detail='Проект закрыт, не подлежит удалению!'
-        ) # в документации такое сообщение не прописано

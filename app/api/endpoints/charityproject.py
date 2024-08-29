@@ -15,7 +15,8 @@ from app.schemas.charityproject import (
     CharityProjectResponse
 )
 # from app.schemas.donation import ReservationDB
-from app.api.validators import (object_exists,
+from app.api.validators import (
+                                # object_exists,
                                 invested_amount_zero,
                                 is_opened,
                                 check_name_duplicate
@@ -65,20 +66,8 @@ async def delete_charity_project(
     """Только для суперюзеров"""
     charity_project = await charity_project_crud.get_or_exception(
         charity_project_id, session)
-    # charity_project = await object_exists(
-    #     charity_project_id, charity_project_crud, session) # , user
-    # charity_project = await invested_amount_zero(
-        # charity_project_id, charity_project_crud, session)
-    # await invested_amount_zero(
-    #     charity_project, charity_project_crud, session)
-    # await is_opened(
-    #     charity_project, charity_project_crud, session)
-    await invested_amount_zero(
-        charity_project, session)
-    await is_opened(
-        charity_project, session)
-    # charity_project = await charity_project_crud.get(
-    #     obj_id=charity_project_id, session=session)
+    invested_amount_zero(charity_project)
+    is_opened(charity_project)
     charity_project = await charity_project_crud.remove(
         charity_project, session)
     return charity_project
@@ -96,8 +85,10 @@ async def partially_update_charity_project(  #добавить проверку,
         session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперюзеров."""
-    charity_project = await object_exists(
-        charity_project_id, charity_project_crud, session)
+    # charity_project = await object_exists(
+    #     charity_project_id, charity_project_crud, session)
+    charity_project = await charity_project_crud.get_or_exception(
+        charity_project_id, session)
 
     # if obj_in.name is not None:
     #     await check_name_duplicate(obj_in.name, session)
