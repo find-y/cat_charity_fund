@@ -29,6 +29,7 @@ class Base(DeclarativeBase):
         return cls.__name__.lower()
 '''
 
+
 class PreBase:
 
     @declared_attr
