@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 
-from app.crud.charityproject import charity_project_crud
+from app.crud.charity_project import charity_project_crud
 from app.crud.donation import donation_crud
-from app.schemas.charityproject import (
+from app.schemas.charity_project import (
     CharityProjectBase,
     CharityProjectCreate,
     CharityProjectDB,
@@ -19,7 +19,8 @@ from app.api.validators import (
                                 # object_exists,
                                 invested_amount_zero,
                                 is_opened,
-                                check_name_duplicate
+                                check_name_duplicate,
+                                new_full_more_than_invested
                                 )  #check_name_duplicate, check_meeting_room_exists
 
 router = APIRouter()
@@ -66,8 +67,8 @@ async def delete_charity_project(
     """Только для суперюзеров"""
     charity_project = await charity_project_crud.get_or_exception(
         charity_project_id, session)
-    invested_amount_zero(charity_project)
-    is_opened(charity_project)
+    invested_amount_zero(charity_project.invested_amount)
+    is_opened(charity_project.close_date)
     charity_project = await charity_project_crud.remove(
         charity_project, session)
     return charity_project
@@ -92,6 +93,9 @@ async def partially_update_charity_project(  #добавить проверку,
 
     # if obj_in.name is not None:
     #     await check_name_duplicate(obj_in.name, session)
+    if obj_in.full_amount is not None:
+        new_full_more_than_invested(
+            obj_in.full_amount, charity_project.invested_amount)
 
     charity_project = await charity_project_crud.update(
         charity_project, obj_in, session

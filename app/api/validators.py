@@ -1,8 +1,9 @@
 # app/api/validators.py
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime
 
-from app.crud.charityproject import charity_project_crud
+from app.crud.charity_project import charity_project_crud
 # from app.crud.donation import donation_crud
 
 from app.models import CharityProject, Donation #, User
@@ -21,27 +22,37 @@ async def check_name_duplicate(
 
 
 def invested_amount_zero(
-        obj: int,
-) -> CharityProject:
+        invested_amount: int,
+) -> None:
     """проверяет, что не было донатов в проект"""
-    if obj.invested_amount != 0:
+    if invested_amount != 0:
         raise HTTPException(
             status_code=400,
             detail='В проект были внесены средства, не подлежит удалению!'
         )
-    print('денег нет') #######
 
 
 def is_opened(
-        obj: int,
-) -> CharityProject:
-    """проверяет, что проект не закрыт"""
-    if obj.close_date:
+        close_date: datetime,
+) -> None:
+    """проверяет, что проект открыт"""
+    if close_date:
         raise HTTPException(
             status_code=400,
             detail='Проект закрыт, не подлежит удалению!'
-        ) # в документации такое сообщение не прописано
-    print('открыт') ############
+        )  # в документации такое сообщение не прописано
+
+
+def new_full_more_than_invested(
+        new_full: int,
+        invested: int,
+) -> None:
+    """проверяет, что проект не закрыт"""
+    if new_full < invested:
+        raise HTTPException(
+            status_code=400,
+            detail='Нелья установить значение full_amount меньше уже вложенной суммы.'
+        )
 
 
 # async def check_meeting_room_exists(
