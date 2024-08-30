@@ -40,5 +40,20 @@ class CRUDCharityProject(CRUDBase):
             )
         return obj
 
+    async def get_open_projects_sorted(
+            self,
+            session: AsyncSession
+    ):
+        # Создаем запрос для фильтрации по `close_date` и сортировки по `create_date`
+        stmt = select(self.model).where(self.model.close_date.is_(None)).order_by(self.model.create_date)
+
+        # Выполняем запрос
+        result = await session.execute(stmt)
+        
+        # Получаем все объекты
+        db_objs = result.scalars().all()
+
+        return db_objs
+
 
 charity_project_crud = CRUDCharityProject(CharityProject)
