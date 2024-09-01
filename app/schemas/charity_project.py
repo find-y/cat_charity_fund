@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
 
-from pydantic import BaseModel, Field, validator, Extra, PositiveInt
+from pydantic import BaseModel, Field, validator, Extra, PositiveInt, NonNegativeInt
 
 
 class CharityProjectBase(BaseModel):
@@ -20,7 +20,7 @@ class CharityProjectBase(BaseModel):
 
     name: Optional[str]
     description: Optional[str]
-    full_amount: Optional[PositiveInt]
+    full_amount: Optional[NonNegativeInt]
 
     # invested_amount: Optional[int]  #= Field(None, example="10")
     # fully_invested: Optional[int]  #= Field(None)
@@ -34,7 +34,7 @@ class CharityProjectBase(BaseModel):
 class CharityProjectCreate(CharityProjectBase):
     # name: str = Field(..., min_length=1, max_length=100)
     name: str = Field(...)
-    full_amount: PositiveInt = Field(...)
+    full_amount: NonNegativeInt = Field(...)
     # create_date: datetime = Field(...)
 
 # class CharityProjectUpdate(CharityProjectBase):
@@ -42,8 +42,8 @@ class CharityProjectCreate(CharityProjectBase):
 
 
 class CharityProjectResponse(CharityProjectCreate):
-    invested_amount: Optional[PositiveInt]  #= Field(None, example="10")
-    fully_invested: Optional[PositiveInt]  #= Field(None)
+    invested_amount: Optional[NonNegativeInt]  #= Field(None, example="10")
+    fully_invested: Optional[int]  #= Field(None)
     create_date: Optional[datetime] ##
     close_date: Optional[datetime] #= Field(None) # не убирает из примеров
 

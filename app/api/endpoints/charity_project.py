@@ -22,6 +22,8 @@ from app.api.validators import (
                                 check_name_duplicate,
                                 new_full_more_than_invested
                                 )  #check_name_duplicate, check_meeting_room_exists
+from app.services.investition import add_donations_to_project
+
 
 router = APIRouter()
 
@@ -39,7 +41,16 @@ async def create_new_charity_project(
 ):
     """Только для суперюзеров."""
     await check_name_duplicate(charity_project.name, session)
+
     charity_project = await charity_project_crud.create(charity_project, session)
+    # print(charity_project.invested_amount)
+    # print(charity_project.name)
+    # print("aaaaaaaaaaaaaaaaaaa")
+
+    charity_project = await add_donations_to_project(charity_project, session)
+    # print(charity_project.invested_amount)
+    # print(charity_project.name)
+    # print("aaaaaaaaaaaaaaaaaaa")
     return charity_project
 
 
