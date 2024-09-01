@@ -5,22 +5,16 @@ from app.crud.charity_project import charity_project_crud
 from sqlalchemy.exc import SQLAlchemyError
 
 
-async def distribute_donation(donation_id, session):
-    # получили новый pydantic объект donation
-    donation = await donation_crud.get(donation_id, session)
+async def distribute_donation(donation, session):
     left_in_donation = donation.full_amount - donation.invested_amount
-    # получаем список открытых проектов, отсортированный по дате создания
     charity_projects = await charity_project_crud.get_open_projects_sorted(session)
     if not charity_projects:
         return
     else:
-        # берем самый старый последний открытый проект
         proj_number = 0
         while left_in_donation > 0 and proj_number < len(charity_projects):
-            # в донате: получаем сколько осталось для вложений
             left_in_donation = donation.full_amount - donation.invested_amount
             charity_project = charity_projects[proj_number]
-            # в проекте, получаем сколько еще осталось для вложений:
             left_in_project = charity_project.full_amount - charity_project.invested_amount
             if left_in_project >= left_in_donation:
                 current_invest = left_in_donation
@@ -41,12 +35,14 @@ async def distribute_donation(donation_id, session):
                 donation.invested_amount += current_invest
             proj_number += 1
 
+            session.add(charity_project)
+
         session.add(donation)
 
-        for project in charity_projects:
-            session.add(project)
+        # for project in charity_projects:
+        #     session.add(project)
         await session.commit()
-    await session.refresh(donation)
+        await session.refresh(donation)
     return donation
 
     # except SQLAlchemyError as e:

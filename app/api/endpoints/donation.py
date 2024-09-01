@@ -29,7 +29,8 @@ async def create_new_donation(
         user: User = Depends(current_user),
 ):
     new_donation = await donation_crud.create(donation, session, user)
-    new_donation = await distribute_donation(new_donation.id, session)
+    # new_donation = await distribute_donation(new_donation.id, session)
+    new_donation = await distribute_donation(new_donation, session)
     return new_donation
 
 
