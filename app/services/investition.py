@@ -8,8 +8,9 @@ from sqlalchemy.exc import SQLAlchemyError
 async def distribute_donation(donation, session):
     left_in_donation = donation.full_amount - donation.invested_amount
     charity_projects = await charity_project_crud.get_open_projects_sorted(session)
-    if not charity_projects:
-        return
+    # if charity_projects is []:
+    if not charity_projects: # разобраться, отлчие пустого списка и none
+        return donation
     else:
         proj_number = 0
         while left_in_donation > 0 and proj_number < len(charity_projects):

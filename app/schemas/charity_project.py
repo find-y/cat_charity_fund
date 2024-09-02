@@ -43,7 +43,7 @@ class CharityProjectCreate(CharityProjectBase):
 
 class CharityProjectResponse(CharityProjectCreate):
     invested_amount: Optional[NonNegativeInt]  #= Field(None, example="10")
-    fully_invested: Optional[int]  #= Field(None)
+    fully_invested: Optional[bool]  #= Field(None)
     create_date: Optional[datetime] ##
     close_date: Optional[datetime] #= Field(None) # не убирает из примеров
 

@@ -9,7 +9,6 @@ from app.core.user import current_user
 from app.models import User
 
 from app.crud.donation import donation_crud
-from app.crud.charity_project import charity_project_crud
 from app.schemas.donation import (
     DonationBase, DonationCreate, DonationDB, DonationUser, DonationResponse
 )
@@ -29,7 +28,6 @@ async def create_new_donation(
         user: User = Depends(current_user),
 ):
     new_donation = await donation_crud.create(donation, session, user)
-    # new_donation = await distribute_donation(new_donation.id, session)
     new_donation = await distribute_donation(new_donation, session)
     return new_donation
 

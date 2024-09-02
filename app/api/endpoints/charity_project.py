@@ -86,12 +86,12 @@ async def delete_charity_project(
 
 
 @router.patch(
-    '/{meeting_room_id}',
+    '/{charity_project_id}',
     response_model=CharityProjectDB,
     response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)],
 )
-async def partially_update_charity_project(  #добавить проверку, что сумма не меньше внесенной
+async def partially_update_charity_project_id(
         charity_project_id: int,
         obj_in: CharityProjectUpdate,
         session: AsyncSession = Depends(get_async_session),
