@@ -37,7 +37,8 @@ async def create_new_charity_project(
     """Только для суперюзеров."""
     await check_name_duplicate(charity_project.name, session)
 
-    charity_project = await charity_project_crud.create(charity_project, session)
+    charity_project = await charity_project_crud.create(
+        charity_project, session)
     charity_project = await add_donations_to_project(charity_project, session)
     return charity_project
 

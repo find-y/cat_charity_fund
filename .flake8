@@ -9,3 +9,4 @@ exclude =
    venv
    env
    alembic/versions/*.py
+   __init__.py
