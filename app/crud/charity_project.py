@@ -9,11 +9,7 @@ from app.models.charity_project import CharityProject
 
 
 class CRUDCharityProject(CRUDBase):
-        # Преобразуем функцию в метод класса.
     async def get_proj_id_by_name(
-            # Дописываем параметр self.
-            # В качестве альтернативы здесь можно
-            # применить декоратор @staticmethod.
             self,
             proj_name: str,
             session: AsyncSession,
@@ -44,15 +40,11 @@ class CRUDCharityProject(CRUDBase):
             self,
             session: AsyncSession
     ):
-        # Создаем запрос для фильтрации по `close_date` и сортировки по `create_date`
-        stmt = select(self.model).where(self.model.close_date.is_(None)).order_by(self.model.create_date)
-
-        # Выполняем запрос
+        stmt = select(self.model).where(
+            self.model.close_date.is_(None)).order_by(
+                self.model.create_date)
         result = await session.execute(stmt)
-        
-        # Получаем все объекты
         db_objs = result.scalars().all()
-
         return db_objs
 
 

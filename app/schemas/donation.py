@@ -1,7 +1,6 @@
 from typing import Optional
-from datetime import datetime, timezone
-
-from pydantic import BaseModel, Field, validator, Extra, NonNegativeInt, PositiveInt
+from datetime import datetime
+from pydantic import BaseModel, Field, Extra, NonNegativeInt, PositiveInt
 
 
 class DonationBase(BaseModel):
@@ -17,10 +16,10 @@ class DonationCreate(DonationBase):
 
 
 class DonationResponse(DonationCreate):
-    invested_amount: Optional[NonNegativeInt]  #= Field(None, example="10")
-    fully_invested: Optional[bool]  #= Field(None) поменять на bool?
-    create_date: Optional[datetime]  ##
-    close_date: Optional[datetime] #= Field(None) # не убирает из примеров
+    invested_amount: Optional[NonNegativeInt]
+    fully_invested: Optional[bool]
+    create_date: Optional[datetime]
+    close_date: Optional[datetime]
 
     class Config:
         orm_mode = True

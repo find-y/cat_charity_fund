@@ -10,33 +10,12 @@ from sqlalchemy.orm import (
 )
 from app.core.config import settings
 
-#базовый класс из вебинара для sqlalchemy2
-'''
-from sqlalchemy.orm import (
-    DeclarativeBase, #
-    Mapped,
-    mapped_column, #
-    declared_attr,
-)
-class Base(DeclarativeBase):
-    id: Mapped[int] = mapped_column(
-        primary_key=True,
-        autoincrement=True
-    )
-
-    @declared_attr.directive()
-    def __tablename__(cls) -> str:
-        return cls.__name__.lower()
-'''
-
 
 class PreBase:
 
     @declared_attr
     def __tablename__(cls):
-        # Именем таблицы будет название модели в нижнем регистре.
         return cls.__name__.lower()
-    # Во все таблицы будет добавлено поле ID.
     id = Column(Integer, primary_key=True)
 
 

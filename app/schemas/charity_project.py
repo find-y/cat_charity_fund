@@ -1,8 +1,9 @@
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import datetime
 from fastapi import HTTPException
 
-from pydantic import BaseModel, Field, validator, Extra, PositiveInt, NonNegativeInt
+from pydantic import (
+    BaseModel, Field, validator, Extra, PositiveInt, NonNegativeInt)
 
 
 class CharityProjectBase(BaseModel):
@@ -17,33 +18,27 @@ class CharityProjectBase(BaseModel):
 class CharityProjectCreate(CharityProjectBase):
     name: str = Field(..., min_length=1, max_length=100)
     description: str = Field(...)
-    # description: str = Field(..., min_length=1)
     full_amount: PositiveInt = Field(...)
 
     @validator('description')
-    def description_not_empty(cls, v):
-        if v.strip() == "":
-            raise HTTPException(status_code=422, detail="Description cannot be empty.")
-        return v
+    def description_not_empty(cls, value):
+        if value.strip() == "":
+            raise HTTPException(status_code=422,
+                                detail="Описание не может быть пустым.")
+        return value
 
 
 class CharityProjectResponse(CharityProjectCreate):
-    invested_amount: Optional[NonNegativeInt]  #= Field(None, example="10")
-    fully_invested: Optional[bool]  #= Field(None)
-    create_date: Optional[datetime] ##
-    close_date: Optional[datetime] #= Field(None) # не убирает из примеров
+    invested_amount: Optional[NonNegativeInt]
+    fully_invested: Optional[bool]
+    create_date: Optional[datetime]
+    close_date: Optional[datetime]
 
     class Config:
         orm_mode = True
 
 
 class CharityProjectUpdate(CharityProjectBase):
-    # @validator('name')
-    # def name_cannot_be_null(cls, value):
-    #     if value is None:
-    #         raise ValueError('Имя переговорки не может быть пустым!')
-    #     return value
-
     pass
 
 
