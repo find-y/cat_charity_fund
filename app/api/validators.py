@@ -47,12 +47,16 @@ def new_full_more_than_invested(
         new_full: int,
         invested: int,
 ) -> None:
-    """проверяет, что проект не закрыт"""
+    """
+    Проверяет, что новая сумма проекта
+    не меньше вложенных инвестиций.
+    """
     if new_full < invested:
         raise HTTPException(
             status_code=400,
             detail='Нелья установить значение full_amount меньше уже вложенной суммы.'
         )
+
 
 
 # async def check_meeting_room_exists(

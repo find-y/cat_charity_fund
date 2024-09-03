@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
@@ -96,12 +96,20 @@ async def partially_update_charity_project_id(
     charity_project = await charity_project_crud.get_or_exception(
         charity_project_id, session)
 
+    if charity_project.fully_invested is True:
+        # raise ValueError('Проект уже закрыт.')
+        raise HTTPException(
+            status_code=400,
+            detail='Проект уже закрыт, менять нельзя.',
+        )
+
+    # await check_name_duplicate(obj_in.name, session)
     if obj_in.name is not None:
         await check_name_duplicate(obj_in.name, session)
     if obj_in.full_amount is not None:
         new_full_more_than_invested(
             obj_in.full_amount, charity_project.invested_amount)
-
+    #можно объединить со следующим
     if obj_in.full_amount == charity_project.invested_amount:
         charity_project = await close_fully_invested(charity_project, session)
         # убрать в сервисы с единую закрывашку
