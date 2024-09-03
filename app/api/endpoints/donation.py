@@ -1,17 +1,11 @@
 from fastapi import APIRouter, Depends
-
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import func
 
 from app.core.db import get_async_session
-from app.core.user import current_superuser
-from app.core.user import current_user
+from app.core.user import current_superuser, current_user
 from app.models import User
-
 from app.crud.donation import donation_crud
-from app.schemas.donation import (
-    DonationBase, DonationCreate, DonationDB, DonationUser, DonationResponse
-)
+from app.schemas.donation import DonationCreate, DonationDB, DonationUser
 from app.services.investition import distribute_donation
 
 router = APIRouter()
@@ -20,7 +14,6 @@ router = APIRouter()
 @router.post(
     '/',
     response_model=DonationUser,
-    # response_model_exclude_none=True,
 )
 async def create_new_donation(
         donation: DonationCreate,

@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, Text, Boolean, DateTime, ForeignKey
 from app.core.db import Base
 
 
-class Donation(Base):   
+class Donation(Base):
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     comment = Column(Text)
     full_amount = Column(Integer, nullable=False)
