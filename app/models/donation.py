@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.sql import func
 # from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 from app.core.db import Base
 
 
@@ -10,8 +11,15 @@ class Donation(Base):
     full_amount = Column(Integer, nullable=False)
     invested_amount = Column(Integer, default=0, nullable=False)
     fully_invested = Column(Boolean, default=False, nullable=False)
-    create_date = Column(DateTime, default=func.now(), nullable=False)
+    create_date = Column(DateTime, default=datetime.now, nullable=False)
+    # create_date = Column(DateTime, default=datetime.now(), nullable=False)
     close_date = Column(DateTime)
+
+    # class Config:
+    #     # Устанавливаем формат для создания строкового представления даты и времени
+    #     json_encoders = {
+    #         datetime: lambda v: v.isoformat()
+    #     }
 
     # user = relationship("User")
 

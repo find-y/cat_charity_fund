@@ -1,7 +1,7 @@
 # app/api/validators.py
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.crud.charity_project import charity_project_crud
 # from app.crud.donation import donation_crud

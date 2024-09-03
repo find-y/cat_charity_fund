@@ -44,9 +44,7 @@ class CRUDBase:
         session.add(db_obj)
         await session.commit()
         await session.refresh(db_obj)
-        # print('aaaaaaaaaaaaaaa')
-        # print(db_obj)
-        # print(db_obj.__dict__)
+
         return db_obj
 
     async def update(

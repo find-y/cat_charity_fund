@@ -1,5 +1,7 @@
 from sqlalchemy import Column, String, Text, Integer, Boolean, DateTime
 from sqlalchemy.sql import func
+from datetime import datetime, timezone
+
 from app.core.db import Base
 
 
@@ -9,7 +11,7 @@ class CharityProject(Base):
     full_amount = Column(Integer, nullable=False)
     invested_amount = Column(Integer, default=0, nullable=False)
     fully_invested = Column(Boolean, default=False, nullable=False)
-    create_date = Column(DateTime, default=func.now(), nullable=False)
+    create_date = Column(DateTime, default=datetime.now, nullable=False)
     # может вынести в базовый класс?
     close_date = Column(DateTime)
 

@@ -2,54 +2,50 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 from app.crud.donation import donation_crud
 from app.crud.charity_project import charity_project_crud
+from datetime import datetime, timezone
 from sqlalchemy.exc import SQLAlchemyError
 
 
-async def distribute_donation(donation, session):
-    left_in_donation = donation.full_amount - donation.invested_amount
-    charity_projects = await charity_project_crud.get_open_projects_sorted(session)
-    # if charity_projects is []:
-    if not charity_projects: # разобраться, отлчие пустого списка и none
-        return donation
-    else:
-        proj_number = 0
-        while left_in_donation > 0 and proj_number < len(charity_projects):
-            left_in_donation = donation.full_amount - donation.invested_amount
-            charity_project = charity_projects[proj_number]
-            left_in_project = charity_project.full_amount - charity_project.invested_amount
-            if left_in_project >= left_in_donation:
-                current_invest = left_in_donation
-                charity_project.invested_amount += current_invest
-                donation.invested_amount += current_invest
-                if donation.full_amount == donation.invested_amount:  # контрольная проверка, можно убрать
-                    donation.close_date = func.now()
-                    donation.fully_invested = True
-                # if left_in_project == left_in_donation:
-                if charity_project.fully_invested == charity_project.invested_amount:  # условие, если выше было равно. нельяз убрать
-                    charity_project.fully_invested = True
-                    charity_project.close_date = func.now()
-            else:
-                current_invest = left_in_project
-                charity_project.invested_amount += current_invest
-                charity_project.fully_invested = True
-                charity_project.close_date = func.now()
-                donation.invested_amount += current_invest
-            proj_number += 1
+# async def distribute_donation(donation, session):
+#     left_in_donation = donation.full_amount - donation.invested_amount
+#     charity_projects = await charity_project_crud.get_open_projects_sorted(session)
+#     # if charity_projects is []:
+#     if not charity_projects: # разобраться, отлчие пустого списка и none
+#         return donation
+#     else:
+#         proj_number = 0
+#         while left_in_donation > 0 and proj_number < len(charity_projects):
+#             left_in_donation = donation.full_amount - donation.invested_amount
+#             charity_project = charity_projects[proj_number]
+#             left_in_project = charity_project.full_amount - charity_project.invested_amount
+#             if left_in_project >= left_in_donation:
+#                 current_invest = left_in_donation
+#                 charity_project.invested_amount += current_invest
+#                 donation.invested_amount += current_invest
+#                 if donation.full_amount == donation.invested_amount:  # контрольная проверка, можно убрать
+#                     donation.close_date = datetime.now()
+#                     donation.fully_invested = True
+#                 # if left_in_project == left_in_donation:
+#                 if charity_project.fully_invested == charity_project.invested_amount:  # условие, если выше было равно. нельяз убрать
+#                     charity_project.fully_invested = True
+#                     charity_project.close_date = datetime.now()
+#             else:
+#                 current_invest = left_in_project
+#                 charity_project.invested_amount += current_invest
+#                 charity_project.fully_invested = True
+#                 charity_project.close_date = datetime.now()
+#                 donation.invested_amount += current_invest
+#             proj_number += 1
 
-            session.add(charity_project)
+#             session.add(charity_project)
 
-        session.add(donation)
+#         session.add(donation)
 
-        # for project in charity_projects:
-        #     session.add(project)
-        await session.commit()
-        await session.refresh(donation)
-    return donation
-
-    # except SQLAlchemyError as e:
-    #     await session.rollback()
-    #     print(f"Database error occurred: {e}")
-    #     raise
+#         # for project in charity_projects:
+#         #     session.add(project)
+#         await session.commit()
+#         await session.refresh(donation)
+#     return donation
 
 
 async def add_donations_to_project(charity_project, session: AsyncSession):
@@ -69,10 +65,10 @@ async def add_donations_to_project(charity_project, session: AsyncSession):
             donation.invested_amount += left_in_donation
             if donation.full_amount == donation.invested_amount:  # контрольная проверка, можно убрать
                 donation.fully_invested = True
-                donation.close_date = func.now()
+                donation.close_date = datetime.now()
             if charity_project.full_amount == charity_project.invested_amount:  # условие, если выше было равно. нельяз убрать
                 charity_project.fully_invested = True
-                charity_project.close_date = func.now()
+                charity_project.close_date = datetime.now()
         else:
             charity_project.invested_amount += left_in_project
             donation.invested_amount += left_in_project
@@ -88,5 +84,65 @@ async def add_donations_to_project(charity_project, session: AsyncSession):
     await session.refresh(charity_project)
 
     # charity_project = await charity_project_crud.get(charity_project.id, session)
+
+    return charity_project
+
+
+async def distribute_donation(donation, session):
+    left_in_donation = donation.full_amount - donation.invested_amount
+    charity_projects = await charity_project_crud.get_open_projects_sorted(session)
+    # if charity_projects is []:
+    if not charity_projects:  # разобраться, отлчие пустого списка и none
+        return donation
+
+    # proj_number = 0
+    # while left_in_donation > 0 and proj_number < len(charity_projects):
+
+    for charity_project in charity_projects:
+        # if donation.fully_invested is True:
+        #     break
+        if donation.full_amount == donation.invested_amount:
+            donation.fully_invested = True
+            donation.close_date = datetime.now()
+            break
+        left_in_donation = donation.full_amount - donation.invested_amount
+        left_in_project = charity_project.full_amount - charity_project.invested_amount
+
+        if left_in_project > left_in_donation:
+            charity_project.invested_amount += left_in_donation
+            donation.invested_amount += left_in_donation
+            # if donation.full_amount == donation.invested_amount:  # контрольная проверка, можно убрать
+            donation.close_date = datetime.now()
+            donation.fully_invested = True
+            # if left_in_project == left_in_donation:
+            # if charity_project.fully_invested == charity_project.invested_amount:  # условие, если выше было равно. нельяз убрать
+            #     charity_project.fully_invested = True
+            #     charity_project.close_date = datetime.now()
+        else:
+            charity_project.invested_amount += left_in_project
+            charity_project.fully_invested = True
+            charity_project.close_date = datetime.now()
+            donation.invested_amount += left_in_project
+        # proj_number += 1
+
+        session.add(charity_project)
+
+    session.add(donation)
+
+    # for project in charity_projects:
+    #     session.add(project)
+    await session.commit()
+    await session.refresh(donation)
+    return donation
+
+
+async def close_fully_invested(charity_project, session: AsyncSession):
+
+    charity_project.fully_invested = True
+    charity_project.close_date = datetime.now()
+
+    session.add(charity_project)
+    await session.commit()
+    await session.refresh(charity_project)
 
     return charity_project

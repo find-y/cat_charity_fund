@@ -14,6 +14,20 @@
                 "--reload"
             ],
             "jinja": true
+        },
+        {
+            "name": "Python: Запуск тестов",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/Scripts/pytest.exe",  // Путь к pytest в виртуальной среде
+            "args": [
+                "-v",
+                "${workspaceFolder}/tests"
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "ENV_VAR": "value"
+            }
         }
     ]
 }

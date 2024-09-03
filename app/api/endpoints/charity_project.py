@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
 from app.core.user import current_superuser
+from sqlalchemy.sql import func
 
 from app.crud.charity_project import charity_project_crud
 from app.crud.donation import donation_crud
@@ -22,7 +23,7 @@ from app.api.validators import (
                                 check_name_duplicate,
                                 new_full_more_than_invested
                                 )  #check_name_duplicate, check_meeting_room_exists
-from app.services.investition import add_donations_to_project
+from app.services.investition import add_donations_to_project, close_fully_invested
 
 
 router = APIRouter()
@@ -43,14 +44,7 @@ async def create_new_charity_project(
     await check_name_duplicate(charity_project.name, session)
 
     charity_project = await charity_project_crud.create(charity_project, session)
-    # print(charity_project.invested_amount)
-    # print(charity_project.name)
-    # print("aaaaaaaaaaaaaaaaaaa")
-
     charity_project = await add_donations_to_project(charity_project, session)
-    # print(charity_project.invested_amount)
-    # print(charity_project.name)
-    # print("aaaaaaaaaaaaaaaaaaa")
     return charity_project
 
 
@@ -102,11 +96,15 @@ async def partially_update_charity_project_id(
     charity_project = await charity_project_crud.get_or_exception(
         charity_project_id, session)
 
-    # if obj_in.name is not None:
-    #     await check_name_duplicate(obj_in.name, session)
+    if obj_in.name is not None:
+        await check_name_duplicate(obj_in.name, session)
     if obj_in.full_amount is not None:
         new_full_more_than_invested(
             obj_in.full_amount, charity_project.invested_amount)
+
+    if obj_in.full_amount == charity_project.invested_amount:
+        charity_project = await close_fully_invested(charity_project, session)
+        # убрать в сервисы с единую закрывашку
 
     charity_project = await charity_project_crud.update(
         charity_project, obj_in, session

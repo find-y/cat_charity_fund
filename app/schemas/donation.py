@@ -1,19 +1,19 @@
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
-from pydantic import BaseModel, Field, validator, Extra, NonNegativeInt
+from pydantic import BaseModel, Field, validator, Extra, NonNegativeInt, PositiveInt
 
 
 class DonationBase(BaseModel):
     comment: Optional[str]
-    full_amount: Optional[int]
+    full_amount: Optional[PositiveInt]
 
     class Config:
         extra = Extra.forbid
 
 
 class DonationCreate(DonationBase):
-    full_amount: NonNegativeInt = Field(...)
+    full_amount: PositiveInt = Field(...)
 
 
 class DonationResponse(DonationCreate):
