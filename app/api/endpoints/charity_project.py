@@ -13,8 +13,8 @@ from app.schemas.charity_project import (
 from app.api.validators import (
     invested_amount_zero,
     is_opened,
-    check_name_duplicate,
-    new_full_more_than_invested
+    no_name_duplicate,
+    new_full_less_than_invested
 )
 from app.services.investition import (
     add_donations_to_project,
@@ -35,7 +35,7 @@ async def create_new_charity_project(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперюзеров."""
-    await check_name_duplicate(charity_project.name, session)
+    await no_name_duplicate(charity_project.name, session)
 
     charity_project = await charity_project_crud.create(
         charity_project, session)
@@ -94,14 +94,12 @@ async def partially_update_charity_project_id(
             detail='Проект уже закрыт, менять нельзя.',
         )
     if obj_in.name is not None:
-        await check_name_duplicate(obj_in.name, session)
+        await no_name_duplicate(obj_in.name, session)
     if obj_in.full_amount is not None:
-        new_full_more_than_invested(
+        new_full_less_than_invested(
             obj_in.full_amount, charity_project.invested_amount)
-    #можно объединить со следующим
-    if obj_in.full_amount == charity_project.invested_amount:
-        charity_project = await close_fully_invested(charity_project, session)
-        # убрать в сервисы с единую закрывашку
+        charity_project = await close_fully_invested(
+            obj_in.full_amount, charity_project, session)
 
     charity_project = await charity_project_crud.update(
         charity_project, obj_in, session

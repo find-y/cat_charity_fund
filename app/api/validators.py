@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.charity_project import charity_project_crud
 
 
-async def check_name_duplicate(
+async def no_name_duplicate(
         obj_name: str,
         session: AsyncSession,
 ) -> None:
@@ -39,7 +39,7 @@ def is_opened(
         )
 
 
-def new_full_more_than_invested(
+def new_full_less_than_invested(
         new_full: int,
         invested: int,
 ) -> None:
