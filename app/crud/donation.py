@@ -7,10 +7,7 @@ from app.models import Donation, User
 
 class CRUDDonation(CRUDBase):
     async def get_by_user(self, session: AsyncSession, user: User):
-        reservations = await session.execute(
-            select(Donation).where(Donation.user_id == user.id)
-        )
-        return reservations.scalars().all()
+        return await self.get_by_kwargs(session, user_id=user.id)
 
     async def get_open_donations_sorted(self, session: AsyncSession):
         """получить список донейшнов,

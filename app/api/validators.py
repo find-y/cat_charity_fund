@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import HTTPException
+from http import HTTPStatus
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charity_project import charity_project_crud
@@ -14,7 +15,7 @@ async def check_name_not_duplicated(
     obj_id = await charity_project_crud.get_proj_id_by_name(obj_name, session)
     if obj_id is not None:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail="Проект с таким именем уже существует!",
         )
 
@@ -25,7 +26,7 @@ def validate_invested_amount_zero(
     """проверяет, что не было донатов в проект"""
     if invested_amount != 0:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail="В проект были внесены средства, не подлежит удалению!",
         )
 
@@ -36,7 +37,8 @@ def check_project_is_open(
     """проверяет, что проект открыт"""
     if close_date:
         raise HTTPException(
-            status_code=400, detail="Проект закрыт, не подлежит удалению!"
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Проект закрыт, не подлежит удалению!"
         )
 
 
@@ -50,7 +52,7 @@ def validate_new_full_amount_less_invested(
     """
     if new_full < invested:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail=(
                 "Нельзя установить значение full_amount "
                 "меньше уже вложенной суммы."
@@ -65,5 +67,6 @@ def check_project_not_fully_invested(charity_project) -> None:
     """
     if charity_project.fully_invested:
         raise HTTPException(
-            status_code=400, detail="Проект уже закрыт, менять нельзя."
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Проект уже закрыт, менять нельзя."
         )

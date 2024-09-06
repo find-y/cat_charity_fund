@@ -14,11 +14,8 @@ class CRUDCharityProject(CRUDBase):
         proj_name: str,
         session: AsyncSession,
     ) -> Optional[int]:
-        db_room_id = await session.execute(
-            select(CharityProject.id).where(CharityProject.name == proj_name)
-        )
-        db_room_id = db_room_id.scalars().first()
-        return db_room_id
+        project = await self.get_by_kwargs(session, name=proj_name)
+        return project[0].id if project else None
 
     async def get_or_exception(
         self,
@@ -37,8 +34,7 @@ class CRUDCharityProject(CRUDBase):
             .order_by(self.model.create_date)
         )
         result = await session.execute(stmt)
-        db_objs = result.scalars().all()
-        return db_objs
+        return result.scalars().all()
 
 
 charity_project_crud = CRUDCharityProject(CharityProject)

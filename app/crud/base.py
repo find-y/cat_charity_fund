@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
@@ -21,6 +21,13 @@ class CRUDBase:
             select(self.model).where(self.model.id == obj_id)
         )
         return db_obj.scalars().first()
+
+    async def get_by_kwargs(
+        self, session: AsyncSession, **kwargs: Any
+    ) -> Optional[list]:
+        query = select(self.model).filter_by(**kwargs)
+        result = await session.execute(query)
+        return result.scalars().all()
 
     async def get_multi(self, session: AsyncSession):
         db_objs = await session.execute(select(self.model))

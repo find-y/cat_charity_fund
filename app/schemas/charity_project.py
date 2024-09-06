@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import HTTPException
+from http import HTTPStatus
 from pydantic import (
     BaseModel,
     Extra,
@@ -30,7 +31,8 @@ class CharityProjectCreate(CharityProjectBase):
     def description_not_empty(cls, value):
         if value.strip() == "":
             raise HTTPException(
-                status_code=422, detail="Описание не может быть пустым."
+                status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
+                detail="Описание не может быть пустым."
             )
         return value
 
