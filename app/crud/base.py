@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class CRUDBase:
@@ -26,9 +26,7 @@ class CRUDBase:
         return db_obj.scalars().first()
 
     async def get_by_kwargs(
-        self,
-        session: AsyncSession,
-        **kwargs: Any
+        self, session: AsyncSession, **kwargs: Any
     ) -> Optional[list]:
         """Получить объекты по ключевым словам."""
         query = select(self.model).filter_by(**kwargs)
@@ -41,10 +39,7 @@ class CRUDBase:
         return db_objs.scalars().all()
 
     async def create(
-        self,
-        obj_in,
-        session: AsyncSession,
-        user: Optional[User] = None
+        self, obj_in, session: AsyncSession, user: Optional[User] = None
     ) -> T:
         """Создать новый объект."""
         obj_in_data = obj_in.dict()
@@ -85,10 +80,7 @@ class CRUDBase:
         await session.commit()
         return db_obj
 
-    async def get_open_obj_sorted(
-        self,
-        session: AsyncSession
-    ) -> List[T]:
+    async def get_open_obj_sorted(self, session: AsyncSession) -> List[T]:
         """Получить отсортированные открытые объекты.
 
         Отсортированные по дате создания от старого к новому,

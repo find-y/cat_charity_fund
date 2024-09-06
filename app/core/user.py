@@ -46,6 +46,7 @@ auth_backend = AuthenticationBackend(
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     """Менеджер пользователей для управления юзерами и аутентификацией."""
+
     async def validate_password(
         self,
         password: str,
