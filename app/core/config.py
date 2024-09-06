@@ -1,5 +1,6 @@
-from typing import Optional
 import logging
+from typing import Optional
+
 from pydantic import BaseSettings, EmailStr
 
 

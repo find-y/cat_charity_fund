@@ -27,14 +27,5 @@ class CRUDCharityProject(CRUDBase):
             raise HTTPException(status_code=404, detail="Объект не найден!")
         return obj
 
-    async def get_open_projects_sorted(self, session: AsyncSession):
-        stmt = (
-            select(self.model)
-            .where(self.model.close_date.is_(None))
-            .order_by(self.model.create_date)
-        )
-        result = await session.execute(stmt)
-        return result.scalars().all()
-
 
 charity_project_crud = CRUDCharityProject(CharityProject)

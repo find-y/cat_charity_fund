@@ -7,6 +7,7 @@ class Donation(CommonBase):
     """
     Модель доната.
     """
+
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     comment = Column(Text)
 

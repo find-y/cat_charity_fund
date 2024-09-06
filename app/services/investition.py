@@ -7,15 +7,23 @@ from app.crud.donation import donation_crud
 
 
 def close_obj(obj):
+    """Закрывает объект.
+
+    Устанавливает его как полностью инвестированный,
+    сумма инвестиций равна сумме проекта,
+    дата закрытия на момент закрытия.
+    """
+    obj.invested_amount = obj.full_amount
     obj.fully_invested = True
     obj.close_date = datetime.now()
 
 
 async def add_donations_to_project(charity_project, session: AsyncSession):
+    """Добавляет все доступные донаты в проект"""
+    available_donations = await donation_crud.get_open_obj_sorted(session)
 
-    available_donations = await donation_crud.get_open_donations_sorted(
-        session
-    )
+    if not available_donations:
+        return charity_project
 
     for donation in available_donations:
         left_in_project = (
@@ -28,7 +36,6 @@ async def add_donations_to_project(charity_project, session: AsyncSession):
 
         if left_in_donation <= left_in_project:
             charity_project.invested_amount += left_in_donation
-            donation.invested_amount += left_in_donation
             close_obj(donation)
             if charity_project.full_amount == charity_project.invested_amount:
                 close_obj(charity_project)
@@ -46,9 +53,8 @@ async def add_donations_to_project(charity_project, session: AsyncSession):
 
 
 async def distribute_donation(donation, session):
-    charity_projects = await charity_project_crud.get_open_projects_sorted(
-        session
-    )
+    """Распрделяет донат по всем открытм проектам"""
+    charity_projects = await charity_project_crud.get_open_obj_sorted(session)
 
     if not charity_projects:
         return donation
@@ -64,11 +70,9 @@ async def distribute_donation(donation, session):
 
         if left_in_project > left_in_donation:
             charity_project.invested_amount += left_in_donation
-            donation.invested_amount += left_in_donation
             close_obj(donation)
 
         else:
-            charity_project.invested_amount += left_in_project
             close_obj(charity_project)
             donation.invested_amount += left_in_project
 
@@ -84,7 +88,7 @@ async def distribute_donation(donation, session):
 async def close_fully_invested(
     new_full_amount, charity_project, session: AsyncSession
 ):
-
+    """Закрывает проект, который набрал полную сумму"""
     if new_full_amount == charity_project.invested_amount:
         close_obj(charity_project)
 

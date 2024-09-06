@@ -1,7 +1,7 @@
 from datetime import datetime
+from http import HTTPStatus
 
 from fastapi import HTTPException
-from http import HTTPStatus
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charity_project import charity_project_crud
@@ -38,7 +38,7 @@ def check_project_is_open(
     if close_date:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail="Проект закрыт, не подлежит удалению!"
+            detail="Проект закрыт, не подлежит удалению!",
         )
 
 
@@ -68,5 +68,5 @@ def check_project_not_fully_invested(charity_project) -> None:
     if charity_project.fully_invested:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail="Проект уже закрыт, менять нельзя."
+            detail="Проект уже закрыт, менять нельзя.",
         )

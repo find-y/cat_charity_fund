@@ -1,5 +1,5 @@
-from typing import Optional, Union
 import logging
+from typing import Optional, Union
 
 from fastapi import Depends, Request
 from fastapi_users import (
@@ -20,7 +20,6 @@ from app.core.config import settings
 from app.core.db import get_async_session
 from app.models.user import User
 from app.schemas.user import UserCreate
-
 
 logger = logging.getLogger(__name__)
 

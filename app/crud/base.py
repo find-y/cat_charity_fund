@@ -71,3 +71,15 @@ class CRUDBase:
         await session.delete(db_obj)
         await session.commit()
         return db_obj
+
+    async def get_open_obj_sorted(self, session: AsyncSession):
+        """получить список объектов,
+        отсортированных по дате создания от старого к новому,
+        в которых fully_invested = False"""
+        stmt = (
+            select(self.model)
+            .where(self.model.fully_invested == 0)
+            .order_by(self.model.create_date)
+        )
+        result = await session.execute(stmt)
+        return result.scalars().all()
