@@ -1,9 +1,15 @@
-from typing import Optional
 from datetime import datetime
-from fastapi import HTTPException
+from typing import Optional
 
+from fastapi import HTTPException
 from pydantic import (
-    BaseModel, Field, validator, Extra, PositiveInt, NonNegativeInt)
+    BaseModel,
+    Extra,
+    Field,
+    NonNegativeInt,
+    PositiveInt,
+    validator,
+)
 
 
 class CharityProjectBase(BaseModel):
@@ -20,11 +26,12 @@ class CharityProjectCreate(CharityProjectBase):
     description: str = Field(...)
     full_amount: PositiveInt = Field(...)
 
-    @validator('description')
+    @validator("description")
     def description_not_empty(cls, value):
         if value.strip() == "":
-            raise HTTPException(status_code=422,
-                                detail="Описание не может быть пустым.")
+            raise HTTPException(
+                status_code=422, detail="Описание не может быть пустым."
+            )
         return value
 
 

@@ -1,7 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.crud.donation import donation_crud
-from app.crud.charity_project import charity_project_crud
 from datetime import datetime
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.crud.charity_project import charity_project_crud
+from app.crud.donation import donation_crud
 
 
 def close_obj(obj):
@@ -12,11 +14,13 @@ def close_obj(obj):
 async def add_donations_to_project(charity_project, session: AsyncSession):
 
     available_donations = await donation_crud.get_open_donations_sorted(
-        session)
+        session
+    )
 
     for donation in available_donations:
         left_in_project = (
-            charity_project.full_amount - charity_project.invested_amount)
+            charity_project.full_amount - charity_project.invested_amount
+        )
         left_in_donation = donation.full_amount - donation.invested_amount
 
         if left_in_project <= 0:
@@ -43,7 +47,8 @@ async def add_donations_to_project(charity_project, session: AsyncSession):
 
 async def distribute_donation(donation, session):
     charity_projects = await charity_project_crud.get_open_projects_sorted(
-        session)
+        session
+    )
 
     if not charity_projects:
         return donation
@@ -54,7 +59,8 @@ async def distribute_donation(donation, session):
             break
         left_in_donation = donation.full_amount - donation.invested_amount
         left_in_project = (
-            charity_project.full_amount - charity_project.invested_amount)
+            charity_project.full_amount - charity_project.invested_amount
+        )
 
         if left_in_project > left_in_donation:
             charity_project.invested_amount += left_in_donation
@@ -76,7 +82,8 @@ async def distribute_donation(donation, session):
 
 
 async def close_fully_invested(
-        new_full_amount, charity_project, session: AsyncSession):
+    new_full_amount, charity_project, session: AsyncSession
+):
 
     if new_full_amount == charity_project.invested_amount:
         close_obj(charity_project)
