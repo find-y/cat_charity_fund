@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 
 from pydantic import BaseSettings, EmailStr
@@ -14,12 +13,6 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
 
 
 settings: Settings = Settings()

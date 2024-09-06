@@ -3,11 +3,11 @@ from typing import Optional
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.base import CRUDBase
+from app.crud.base import CRUDBaseInvest
 from app.models.charity_project import CharityProject
 
 
-class CRUDCharityProject(CRUDBase):
+class CRUDCharityProject(CRUDBaseInvest):
     async def get_proj_id_by_name(
         self,
         proj_name: str,

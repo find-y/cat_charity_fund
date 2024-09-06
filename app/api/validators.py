@@ -11,7 +11,7 @@ async def check_name_not_duplicated(
     obj_name: str,
     session: AsyncSession,
 ) -> None:
-    """проверяет, что имя не занято."""
+    """Проверяет, что имя не занято."""
     obj_id = await charity_project_crud.get_proj_id_by_name(obj_name, session)
     if obj_id is not None:
         raise HTTPException(
@@ -23,7 +23,7 @@ async def check_name_not_duplicated(
 def validate_invested_amount_zero(
     invested_amount: int,
 ) -> None:
-    """проверяет, что не было донатов в проект."""
+    """Инвестированная сумма равна нулю."""
     if invested_amount != 0:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
@@ -47,7 +47,7 @@ def validate_new_full_amount_less_invested(
     invested: int,
 ) -> None:
     """
-    Проверяет, что новая сумма не меньше вложений.
+    Проверяет, что новая сумма не меньше cделанных вложений.
     """
     if new_full < invested:
         raise HTTPException(
@@ -61,7 +61,7 @@ def validate_new_full_amount_less_invested(
 
 def check_project_not_fully_invested(charity_project) -> None:
     """
-    Проверяет, что проект не закрыт.
+    Проект не является полностью проинвестированным.
     """
     if charity_project.fully_invested:
         raise HTTPException(

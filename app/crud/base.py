@@ -92,3 +92,18 @@ class CRUDBase:
         )
         result = await session.execute(stmt)
         return result.scalars().all()
+
+
+class CRUDBaseInvest(CRUDBase):
+    async def get_open_obj_sorted(self, session: AsyncSession) -> List[T]:
+        """Получить отсортированные открытые объекты.
+
+        Отсортированные по дате создания от старого к новому,
+        в которых fully_invested = False"""
+        stmt = (
+            select(self.model)
+            .where(self.model.fully_invested == 0)
+            .order_by(self.model.create_date)
+        )
+        result = await session.execute(stmt)
+        return result.scalars().all()
