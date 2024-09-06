@@ -6,6 +6,7 @@ from app.core.db import Base
 
 
 class CommonBase(Base):
+    """Абстрактная база данных с общими полями для проектов и донатов."""
     __abstract__ = True
 
     full_amount = Column(Integer, nullable=False)

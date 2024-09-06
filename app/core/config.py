@@ -22,4 +22,4 @@ logging.basicConfig(
 )
 
 
-settings = Settings()
+settings: Settings = Settings()

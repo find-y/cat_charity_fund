@@ -4,6 +4,4 @@ from app.core.db import Base
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    """
-    Модель юзера.
-    """
+    """Модель юзера."""

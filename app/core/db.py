@@ -8,6 +8,7 @@ from app.core.config import settings
 
 
 class PreBase:
+    """Базовый класс моделей."""
 
     @declared_attr
     def __tablename__(cls):
@@ -24,5 +25,6 @@ AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession)
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    """Создает асинхронную сессию."""
     async with AsyncSessionLocal() as session:
         yield session

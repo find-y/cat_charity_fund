@@ -4,9 +4,7 @@ from .base import CommonBase
 
 
 class CharityProject(CommonBase):
-    """
-    Модель благотвориельного проекта.
-    """
+    """Модель благотвориельного проекта."""
 
     name = Column(String(100), unique=True, nullable=False)
     description = Column(Text, nullable=False)

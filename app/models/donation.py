@@ -4,9 +4,7 @@ from .base import CommonBase
 
 
 class Donation(CommonBase):
-    """
-    Модель доната.
-    """
+    """Модель доната."""
 
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     comment = Column(Text)

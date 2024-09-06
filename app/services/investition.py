@@ -4,9 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charity_project import charity_project_crud
 from app.crud.donation import donation_crud
+from app.models.charity_project import CharityProject
+from app.models.donation import Donation
 
 
-def close_obj(obj):
+def close_obj(obj) -> None:
     """Закрывает объект.
 
     Устанавливает его как полностью инвестированный,
@@ -18,7 +20,9 @@ def close_obj(obj):
     obj.close_date = datetime.now()
 
 
-async def add_donations_to_project(charity_project, session: AsyncSession):
+async def add_donations_to_project(
+        charity_project: CharityProject,
+        session: AsyncSession)-> CharityProject:
     """Добавляет все доступные донаты в проект"""
     available_donations = await donation_crud.get_open_obj_sorted(session)
 
@@ -52,7 +56,8 @@ async def add_donations_to_project(charity_project, session: AsyncSession):
     return charity_project
 
 
-async def distribute_donation(donation, session):
+async def distribute_donation(donation: Donation,
+                              session: AsyncSession) -> Donation:
     """Распрделяет донат по всем открытм проектам"""
     charity_projects = await charity_project_crud.get_open_obj_sorted(session)
 
@@ -86,8 +91,10 @@ async def distribute_donation(donation, session):
 
 
 async def close_fully_invested(
-    new_full_amount, charity_project, session: AsyncSession
-):
+    new_full_amount: int,
+    charity_project: CharityProject,
+    session: AsyncSession
+) -> CharityProject:
     """Закрывает проект, который набрал полную сумму"""
     if new_full_amount == charity_project.invested_amount:
         close_obj(charity_project)

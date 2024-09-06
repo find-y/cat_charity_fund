@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+    """Возвращает экземпляр SQLAlchemyUserDatabase для работы с юзерами."""
     yield SQLAlchemyUserDatabase(session, User)
 
 
@@ -32,6 +33,7 @@ bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
 
 def get_jwt_strategy() -> JWTStrategy:
+    """Возвращает стратегию JWT для аутентификации."""
     return JWTStrategy(secret=settings.secret, lifetime_seconds=3600)
 
 
@@ -43,12 +45,13 @@ auth_backend = AuthenticationBackend(
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
-
+    """Менеджер пользователей для управления юзерами и аутентификацией."""
     async def validate_password(
         self,
         password: str,
         user: Union[UserCreate, User],
     ) -> None:
+        """Проверяет корректность пароля пользователя."""
         if len(password) < 3:
             raise InvalidPasswordException(
                 reason="Password should be at least 3 characters"
@@ -61,10 +64,12 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def on_after_register(
         self, user: User, request: Optional[Request] = None
     ):
+        """Вызывается после регистрации пользователя."""
         logger.info(f"Пользователь {user.email} зарегистрирован.")
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
+    """Возвращает экземпляр UserManager для работы с пользователями."""
     yield UserManager(user_db)
 
 

@@ -11,7 +11,11 @@ from app.services.investition import distribute_donation
 router = APIRouter()
 
 
-@router.post("/", response_model=DonationUser, summary="Создает донат.")
+@router.post(
+    "/",
+    response_model=DonationUser,
+    summary="Создает донат."
+)
 async def create_new_donation(
     donation: DonationCreate,
     session: AsyncSession = Depends(get_async_session),
