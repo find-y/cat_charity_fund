@@ -32,7 +32,7 @@ async def create_new_donation(
 async def get_all_donations(
     session: AsyncSession = Depends(get_async_session),
 ):
-    donations = await donation_crud.get_multi(session)
+    donations = await donation_crud.get_all(session)
     return donations
 
 

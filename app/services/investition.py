@@ -23,8 +23,10 @@ def close_obj(obj) -> None:
 async def add_donations_to_project(
     charity_project: CharityProject, session: AsyncSession
 ) -> CharityProject:
-    """Добавляет все доступные донаты в проект"""
-    available_donations = await donation_crud.get_open_obj_sorted(session)
+    """Добавляет все доступные донаты в проект."""
+    # available_donations = await donation_crud.get_open_obj_sorted(session)
+    available_donations = await donation_crud.filter(
+        session, fully_invested=False)
 
     if not available_donations:
         return charity_project
@@ -59,8 +61,10 @@ async def add_donations_to_project(
 async def distribute_donation(
     donation: Donation, session: AsyncSession
 ) -> Donation:
-    """Распрделяет донат по всем открытм проектам"""
+    """Распрделяет донат по всем открытм проектам."""
     charity_projects = await charity_project_crud.get_open_obj_sorted(session)
+    # charity_projects = await charity_project_crud.filter(
+    #     session, fully_invested=False)
 
     if not charity_projects:
         return donation
@@ -96,7 +100,7 @@ async def close_fully_invested(
     charity_project: CharityProject,
     session: AsyncSession,
 ) -> CharityProject:
-    """Закрывает проект, который набрал полную сумму"""
+    """Закрывает проект, который набрал полную сумму."""
     if new_full_amount == charity_project.invested_amount:
         close_obj(charity_project)
 

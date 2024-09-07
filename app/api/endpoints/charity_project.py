@@ -51,7 +51,7 @@ async def create_new_charity_project(
 async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session),
 ):
-    charity_projects = await charity_project_crud.get_multi(session)
+    charity_projects = await charity_project_crud.get_all(session)
     return charity_projects
 
 
@@ -65,7 +65,7 @@ async def delete_charity_project(
     charity_project_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    charity_project = await charity_project_crud.get_or_exception(
+    charity_project = await charity_project_crud.get_or_404(
         charity_project_id, session
     )
     validate_invested_amount_zero(charity_project.invested_amount)
@@ -88,7 +88,7 @@ async def partially_update_charity_project_id(
     obj_in: CharityProjectUpdate,
     session: AsyncSession = Depends(get_async_session),
 ):
-    charity_project = await charity_project_crud.get_or_exception(
+    charity_project = await charity_project_crud.get_or_404(
         charity_project_id, session
     )
     check_project_not_fully_invested(charity_project)

@@ -1,8 +1,10 @@
 from typing import Any, List, Optional, Type, TypeVar
 
 from fastapi.encoders import jsonable_encoder
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import NoResultFound
 
 from app.models import User
 
@@ -25,15 +27,43 @@ class CRUDBase:
         )
         return db_obj.scalars().first()
 
-    async def get_by_kwargs(
-        self, session: AsyncSession, **kwargs: Any
-    ) -> Optional[list]:
+    async def get_or_404(
+        self,
+        obj_id: int,
+        session: AsyncSession,
+    ) -> T:
+        """Получить объект или вызвать исключение."""
+        try:
+            obj = await self.get(obj_id=obj_id, session=session)
+            return obj
+        except NoResultFound:
+            raise HTTPException(status_code=404, detail="Объект не найден!")
+
+    async def exists(
+        self,
+        obj_id: int,
+        session: AsyncSession,
+    ) -> bool:
+        """Проверяет, существует ли объект с указанным id."""
+        query = select(self.model).where(self.model.id == obj_id)
+        result = await session.execute(query)
+        db_obj = result.scalars().all()
+        return bool(db_obj)
+
+    async def filter(
+        self,
+        session: AsyncSession,
+        **kwargs: Any
+    ) -> list[T]:
         """Получить объекты по ключевым словам."""
         query = select(self.model).filter_by(**kwargs)
         result = await session.execute(query)
         return result.scalars().all()
 
-    async def get_multi(self, session: AsyncSession):
+    async def get_all(
+            self,
+            session: AsyncSession
+    ) -> list[T]:
         """Получить все объекты модели."""
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
@@ -80,30 +110,24 @@ class CRUDBase:
         await session.commit()
         return db_obj
 
-    async def get_open_obj_sorted(self, session: AsyncSession) -> List[T]:
-        """Получить отсортированные открытые объекты.
-
-        Отсортированные по дате создания от старого к новому,
-        в которых fully_invested = False"""
-        stmt = (
-            select(self.model)
-            .where(self.model.fully_invested == 0)
-            .order_by(self.model.create_date)
-        )
-        result = await session.execute(stmt)
-        return result.scalars().all()
-
 
 class CRUDBaseInvest(CRUDBase):
+    # async def get_open_obj_sorted(self, session: AsyncSession) -> List[T]:
+    #     """Получить отсортированные открытые объекты.
+
+    #     Отсортированные по дате создания от старого к новому,
+    #     в которых fully_invested = False"""
+    #     stmt = (
+    #         select(self.model)
+    #         .where(self.model.fully_invested == 0)
+    #         .order_by(self.model.create_date)
+    #     )
+    #     result = await session.execute(stmt)
+    #     return result.scalars().all()
+
     async def get_open_obj_sorted(self, session: AsyncSession) -> List[T]:
         """Получить отсортированные открытые объекты.
 
         Отсортированные по дате создания от старого к новому,
         в которых fully_invested = False"""
-        stmt = (
-            select(self.model)
-            .where(self.model.fully_invested == 0)
-            .order_by(self.model.create_date)
-        )
-        result = await session.execute(stmt)
-        return result.scalars().all()
+        return await self.filter(session, fully_invested=False)

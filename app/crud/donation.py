@@ -11,7 +11,7 @@ class CRUDDonation(CRUDBaseInvest):
         self, session: AsyncSession, user: User
     ) -> List[Donation]:
         """Получить донаты пользователя."""
-        return await self.get_by_kwargs(session, user_id=user.id)
+        return await self.filter(session, user_id=user.id)
 
 
 donation_crud = CRUDDonation(Donation)

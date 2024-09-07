@@ -12,8 +12,9 @@ async def check_name_not_duplicated(
     session: AsyncSession,
 ) -> None:
     """Проверяет, что имя не занято."""
-    obj_id = await charity_project_crud.get_proj_id_by_name(obj_name, session)
-    if obj_id is not None:
+    existing_obj = await charity_project_crud.filter(
+        session, name=obj_name)
+    if existing_obj:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Проект с таким именем уже существует!",
