@@ -3,7 +3,7 @@ from typing import Any, Optional, Type, TypeVar
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
-from sqlalchemy.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ObjectNotFoundError
@@ -30,8 +30,6 @@ class CRUDBase:
             return result.scalars().one()
         except NoResultFound:
             raise ObjectNotFoundError("Объект не найден")
-        except MultipleResultsFound:
-            raise RuntimeError("Найдено несколько объектов с таким ID")
 
     async def get_or_404(
         self,
@@ -40,8 +38,7 @@ class CRUDBase:
     ) -> T:
         """Получить объект или вызвать исключение."""
         try:
-            obj = await self.get(obj_id=obj_id, session=session)
-            return obj
+            return await self.get(obj_id=obj_id, session=session)
         except NoResultFound:
             raise HTTPException(status_code=404, detail="Объект не найден!")
 
@@ -51,10 +48,9 @@ class CRUDBase:
         session: AsyncSession,
     ) -> bool:
         """Проверяет, существует ли объект с указанным id."""
-        query = select(self.model).where(self.model.id == obj_id)
+        query = select(self.model).where(self.model.id == obj_id).exists()
         result = await session.execute(query)
-        db_obj = result.scalars().all()
-        return bool(db_obj)
+        return result.scalar()
 
     async def filter(self, session: AsyncSession, **kwargs: Any) -> list[T]:
         """Получить объекты по ключевым словам."""

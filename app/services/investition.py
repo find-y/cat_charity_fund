@@ -3,9 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.charity_project import CharityProject
 
 
-async def invest(new,
-                 crud_obj,
-                 session: AsyncSession):
+async def invest(new, crud_obj, session: AsyncSession):
     """Проводит операции инвестирования.
 
     Новый донат распределяет по всем открытым проектам.

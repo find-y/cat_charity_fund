@@ -19,8 +19,7 @@ async def create_new_donation(
     user: User = Depends(current_user),
 ):
     new_donation = await donation_crud.create(donation, session, user)
-    new_donation = await invest(new_donation, charity_project_crud, session)
-    return new_donation
+    return await invest(new_donation, charity_project_crud, session)
 
 
 @router.get(
@@ -33,8 +32,7 @@ async def create_new_donation(
 async def get_all_donations(
     session: AsyncSession = Depends(get_async_session),
 ):
-    donations = await donation_crud.get_all(session)
-    return donations
+    return await donation_crud.get_all(session)
 
 
 @router.get(
@@ -47,5 +45,4 @@ async def get_my_donations(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user),
 ):
-    donations = await donation_crud.get_by_user(session=session, user=user)
-    return donations
+    return await donation_crud.get_by_user(session=session, user=user)
