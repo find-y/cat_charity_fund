@@ -3,14 +3,8 @@ from http import HTTPStatus
 from typing import Optional
 
 from fastapi import HTTPException
-from pydantic import (
-    BaseModel,
-    Extra,
-    Field,
-    NonNegativeInt,
-    PositiveInt,
-    validator,
-)
+from pydantic import (BaseModel, Extra, Field, NonNegativeInt, PositiveInt,
+                      validator)
 
 
 class CharityProjectBase(BaseModel):
