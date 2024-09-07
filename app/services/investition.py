@@ -8,152 +8,75 @@ from app.models.charity_project import CharityProject
 from app.models.donation import Donation
 
 
-def close_obj(obj) -> None:
-    """Закрывает объект.
+# def close_obj(obj) -> None:
+#     """Закрывает объект.
 
-    Устанавливает его как полностью инвестированный,
-    сумма инвестиций равна сумме проекта,
-    дата закрытия на момент закрытия.
-    """
-    obj.invested_amount = obj.full_amount
-    obj.fully_invested = True
-    obj.close_date = datetime.now()
-
-
-async def add_donations_to_project(
-    charity_project: CharityProject, session: AsyncSession
-) -> CharityProject:
-    """Добавляет все доступные донаты в проект."""
-    available_donations = await donation_crud.filter(
-        session, fully_invested=False)
-
-    if not available_donations:
-        return charity_project
-
-    for donation in available_donations:
-        left_in_project = (
-            charity_project.full_amount - charity_project.invested_amount
-        )
-        left_in_donation = donation.full_amount - donation.invested_amount
-
-        if left_in_project <= 0:
-            break
-
-        if left_in_donation <= left_in_project:
-            charity_project.invested_amount += left_in_donation
-            close_obj(donation)
-            if charity_project.full_amount == charity_project.invested_amount:
-                close_obj(charity_project)
-        else:
-            charity_project.invested_amount += left_in_project
-            donation.invested_amount += left_in_project
-
-        session.add(donation)
-
-    session.add(charity_project)
-    await session.commit()
-    await session.refresh(charity_project)
-
-    return charity_project
+#     Устанавливает его как полностью инвестированный,
+#     сумма инвестиций равна сумме проекта,
+#     дата закрытия на момент закрытия.
+#     """
+#     obj.invested_amount = obj.full_amount
+#     obj.fully_invested = True
+#     obj.close_date = datetime.now()
 
 
-async def distribute_donation(
-    donation: Donation, session: AsyncSession
-) -> Donation:
-    """Распрделяет донат по всем открытым проектам."""
-    charity_projects = await charity_project_crud.filter(
-        session, fully_invested=False)
+# async def invest(new, crud_obj, session: AsyncSession):
+#     """Проводит операции инвестирования.
 
-    if not charity_projects:
-        return donation
+#     Новый донат распределяет по всем открытым проектам.
+#     В новый проект добавляет все доступные донаты.
+#     """
+#     all_opened = await crud_obj.filter(session, fully_invested=False)
 
-    for charity_project in charity_projects:
-        if donation.full_amount == donation.invested_amount:
-            close_obj(donation)
-            break
-        left_in_donation = donation.full_amount - donation.invested_amount
-        left_in_project = (
-            charity_project.full_amount - charity_project.invested_amount
-        )
+#     if not all_opened:
+#         return new
 
-        if left_in_project > left_in_donation:
-            charity_project.invested_amount += left_in_donation
-            close_obj(donation)
-
-        else:
-            close_obj(charity_project)
-            donation.invested_amount += left_in_project
-
-        session.add(charity_project)
-
-    session.add(donation)
-
-    await session.commit()
-    await session.refresh(donation)
-    return donation
-
-
-# async def invest(
-#     invest_to,  # charity_project
-#     crud_obj,  # donation_crud
-#     session: AsyncSession
-# ):
-#     """Добавляет все доступные донаты в проект."""
-#     # """Распрделяет донат по всем открытым проектам."""
-#     available_objets_invest_from = await crud_obj.filter(
-#         session, fully_invested=False)
-
-#     if not available_objets_invest_from:
-#         return invest_to
-
-#     for invest_from in available_objets_invest_from:
-#         if invest_from.full_amount == invest_from.invested_amount:
-#             close_obj(invest_from)
+#     for opened in all_opened:
+#         if left(opened) >= left(new):
+#             opened.invested_amount += left(new)
+#             close_obj(new)
+#             if left(opened) == left(new):
+#                 close_obj(opened)
 #             break
-#         left_invest_from = invest_from.full_amount - invest_from.invested_amount
-#         left_invest_to = (invest_to.full_amount - invest_to.invested_amount)
-
-#         if left_invest_to > left_invest_from:
-#             invest_to.invested_amount += left_invest_from
-#             close_obj(invest_from)
 #         else:
-#             invest_from.invested_amount += left_invest_to
-#             close_obj(invest_to)
+#             new.invested_amount += left(opened)
+#             close_obj(opened)
 
-#         session.add(invest_from)
+#         session.add(opened)
 
-#     session.add(invest_to)
+#     session.add(new)
 
 #     await session.commit()
-#     await session.refresh(invest_to)
-#     return invest_to
+#     await session.refresh(new)
+#     return new
 
-async def invest(
-    new,
-    crud_obj,
-    session: AsyncSession
-):
+
+# def left(obj):
+#     """Возвращает оставшуюся сумму инвестиций в объекте."""
+#     return obj.full_amount - obj.invested_amount
+
+
+async def invest(new, crud_obj, session: AsyncSession):
     """Проводит операции инвестирования.
 
-        Новый донат распределяет по всем открытым проектам.
-        В новый проект добавляет все доступные донаты.
+    Новый донат распределяет по всем открытым проектам.
+    В новый проект добавляет все доступные донаты.
     """
-    all_opened = await crud_obj.filter(
-        session, fully_invested=False)
+    all_opened = await crud_obj.filter(session, fully_invested=False)
 
     if not all_opened:
         return new
 
     for opened in all_opened:
-        if left(opened) > left(new):
-            opened.invested_amount += left(new)
-            close_obj(new)
-            # if left(opened) == left(new):
-            #     close_obj(opened)
+        if opened.left() >= new.left():
+            opened.invested_amount += new.left()
+            new.close()
+            if opened.left() == new.left():
+                opened.close()
             break
         else:
-            new.invested_amount += left(opened)
-            close_obj(opened)
+            new.invested_amount += opened.left()
+            opened.close()
 
         session.add(opened)
 
@@ -164,11 +87,6 @@ async def invest(
     return new
 
 
-def left(obj):
-    """Возвращает оставшуюся сумму инвестиций в объекте."""
-    return obj.full_amount - obj.invested_amount
-
-
 async def close_fully_invested(
     new_full_amount: int,
     charity_project: CharityProject,
@@ -176,7 +94,7 @@ async def close_fully_invested(
 ) -> CharityProject:
     """Закрывает проект, который набрал полную сумму."""
     if new_full_amount == charity_project.invested_amount:
-        close_obj(charity_project)
+        charity_project.close()
 
         session.add(charity_project)
         await session.commit()

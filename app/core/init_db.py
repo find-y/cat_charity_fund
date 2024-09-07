@@ -35,7 +35,7 @@ async def create_first_superuser():
     """Создает первого суперюзера, если указаны email и пароль в настройках."""
     if (
         settings.first_superuser_email is not None
-        and settings.first_superuser_password is not None # noqa
+        and settings.first_superuser_password is not None  # noqa
     ):
         await create_user(
             email=settings.first_superuser_email,

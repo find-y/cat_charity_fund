@@ -12,8 +12,7 @@ async def check_name_not_duplicated(
     session: AsyncSession,
 ) -> None:
     """Проверяет, что имя не занято."""
-    existing_obj = await charity_project_crud.filter(
-        session, name=obj_name)
+    existing_obj = await charity_project_crud.filter(session, name=obj_name)
     if existing_obj:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,

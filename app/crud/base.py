@@ -1,13 +1,13 @@
 from typing import Any, List, Optional, Type, TypeVar
 
-from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
+from app.core.exceptions import ObjectNotFoundError
 from app.models import User
-from core.exceptions import ObjectNotFoundError
 
 T = TypeVar("T")
 
@@ -56,20 +56,13 @@ class CRUDBase:
         db_obj = result.scalars().all()
         return bool(db_obj)
 
-    async def filter(
-        self,
-        session: AsyncSession,
-        **kwargs: Any
-    ) -> list[T]:
+    async def filter(self, session: AsyncSession, **kwargs: Any) -> list[T]:
         """Получить объекты по ключевым словам."""
         query = select(self.model).filter_by(**kwargs)
         result = await session.execute(query)
         return result.scalars().all()
 
-    async def get_all(
-            self,
-            session: AsyncSession
-    ) -> list[T]:
+    async def get_all(self, session: AsyncSession) -> list[T]:
         """Получить все объекты модели."""
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
