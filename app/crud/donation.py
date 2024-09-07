@@ -2,11 +2,11 @@ from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.base import CRUDBaseInvest
+from app.crud.base import CRUDBase
 from app.models import Donation, User
 
 
-class CRUDDonation(CRUDBaseInvest):
+class CRUDDonation(CRUDBase):
     async def get_by_user(
         self, session: AsyncSession, user: User
     ) -> List[Donation]:

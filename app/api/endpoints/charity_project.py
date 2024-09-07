@@ -11,6 +11,7 @@ from app.api.validators import (
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.charity_project import charity_project_crud
+from app.crud.donation import donation_crud
 from app.schemas.charity_project import (
     CharityProjectCreate,
     CharityProjectDB,
@@ -19,6 +20,7 @@ from app.schemas.charity_project import (
 from app.services.investition import (
     add_donations_to_project,
     close_fully_invested,
+    invest
 )
 
 router = APIRouter()
@@ -39,7 +41,8 @@ async def create_new_charity_project(
     charity_project = await charity_project_crud.create(
         charity_project, session
     )
-    charity_project = await add_donations_to_project(charity_project, session)
+    # charity_project = await add_donations_to_project(charity_project, session)
+    charity_project = await invest(charity_project, donation_crud, session)
     return charity_project
 
 

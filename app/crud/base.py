@@ -4,9 +4,10 @@ from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
 from app.models import User
+from core.exceptions import ObjectNotFoundError
 
 T = TypeVar("T")
 
@@ -20,12 +21,17 @@ class CRUDBase:
         self,
         obj_id: int,
         session: AsyncSession,
-    ) -> Optional[T]:
+    ) -> T:
         """Получить объект по ID."""
-        db_obj = await session.execute(
-            select(self.model).where(self.model.id == obj_id)
-        )
-        return db_obj.scalars().first()
+        query = select(self.model).where(self.model.id == obj_id)
+        result = await session.execute(query)
+
+        try:
+            return result.scalars().one()
+        except NoResultFound:
+            raise ObjectNotFoundError("Объект не найден")
+        except MultipleResultsFound:
+            raise RuntimeError("Найдено несколько объектов с таким ID")
 
     async def get_or_404(
         self,
@@ -109,25 +115,3 @@ class CRUDBase:
         await session.delete(db_obj)
         await session.commit()
         return db_obj
-
-
-class CRUDBaseInvest(CRUDBase):
-    # async def get_open_obj_sorted(self, session: AsyncSession) -> List[T]:
-    #     """Получить отсортированные открытые объекты.
-
-    #     Отсортированные по дате создания от старого к новому,
-    #     в которых fully_invested = False"""
-    #     stmt = (
-    #         select(self.model)
-    #         .where(self.model.fully_invested == 0)
-    #         .order_by(self.model.create_date)
-    #     )
-    #     result = await session.execute(stmt)
-    #     return result.scalars().all()
-
-    async def get_open_obj_sorted(self, session: AsyncSession) -> List[T]:
-        """Получить отсортированные открытые объекты.
-
-        Отсортированные по дате создания от старого к новому,
-        в которых fully_invested = False"""
-        return await self.filter(session, fully_invested=False)
