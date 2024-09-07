@@ -16,12 +16,12 @@ class CommonBase(Base):
     create_date = Column(DateTime, default=datetime.now, nullable=False)
     close_date = Column(DateTime)
 
-    def left(self) -> int:
-        """Возвращает оставшуюся сумму инвестиций в проекте."""
-        return self.full_amount - self.invested_amount
+    # def left(self) -> int:
+    #     """Возвращает оставшуюся сумму инвестиций в проекте."""
+    #     return self.full_amount - self.invested_amount
 
-    def close(self) -> None:
-        """Закрывает проект как полностью инвестированный."""
-        self.invested_amount = self.full_amount
-        self.fully_invested = True
-        self.close_date = datetime.now()
+    # def close(self) -> None:
+    #     """Закрывает проект как полностью инвестированный."""
+    #     self.invested_amount = self.full_amount
+    #     self.fully_invested = True
+    #     self.close_date = datetime.now()

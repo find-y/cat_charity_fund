@@ -3,7 +3,42 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.charity_project import CharityProject
 
 
-async def invest(new, crud_obj, session: AsyncSession):
+# async def invest(new,
+#                  crud_obj,
+#                  session: AsyncSession):
+#     """Проводит операции инвестирования.
+
+#     Новый донат распределяет по всем открытым проектам.
+#     В новый проект добавляет все доступные донаты.
+#     """
+#     all_opened = await crud_obj.filter(session, fully_invested=False)
+
+#     if not all_opened:
+#         return new
+
+#     for opened in all_opened:
+#         if opened.left() >= new.left():
+#             opened.invested_amount += new.left()
+#             new.close()
+#             if opened.left() == new.left():
+#                 opened.close()
+#             break
+#         else:
+#             new.invested_amount += opened.left()
+#             opened.close()
+
+#         session.add(opened)
+
+#     session.add(new)
+
+#     await session.commit()
+#     await session.refresh(new)
+#     return new
+
+
+async def invest(new,
+                 crud_obj,
+                 session: AsyncSession):
     """Проводит операции инвестирования.
 
     Новый донат распределяет по всем открытым проектам.
@@ -15,15 +50,15 @@ async def invest(new, crud_obj, session: AsyncSession):
         return new
 
     for opened in all_opened:
-        if opened.left() >= new.left():
-            opened.invested_amount += new.left()
+        if crud_obj.left(opened) >= crud_obj.left(new):
+            opened.invested_amount += crud_obj.left(new)
             new.close()
-            if opened.left() == new.left():
-                opened.close()
+            if crud_obj.left(opened) == crud_obj.left(new):
+                crud_obj.close(opened)
             break
         else:
-            new.invested_amount += opened.left()
-            opened.close()
+            new.invested_amount += crud_obj.left(opened)
+            crud_obj.close(opened)
 
         session.add(opened)
 

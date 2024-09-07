@@ -1,4 +1,5 @@
 from typing import Any, Optional, Type, TypeVar
+from datetime import datetime
 
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -7,7 +8,7 @@ from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import ObjectNotFoundError
-from app.models import User
+from app.models import User #, CommonBase
 
 T = TypeVar("T")
 
@@ -108,3 +109,40 @@ class CRUDBase:
         await session.delete(db_obj)
         await session.commit()
         return db_obj
+
+    def close(self, db_obj) -> T:
+        """Закрывает объект как полностью инвестированный."""
+        db_obj.invested_amount = db_obj.full_amount
+        db_obj.fully_invested = True
+        db_obj.close_date = datetime.now()
+
+    def left(self, db_obj) -> int:
+        """Возвращает оставшуюся сумму инвестиций в объекте."""
+        return db_obj.full_amount - db_obj.invested_amount
+
+
+# class CRUDInvest(CRUDBase):
+#     # def close(self) -> T:
+#     #     """Закрывает объект как полностью инвестированный."""
+#     #     print(self)
+#     #     print(self.model)
+#     #     self.model.invested_amount = self.model.full_amount
+#     #     self.model.fully_invested = True
+#     #     self.model.close_date = datetime.now()
+
+#     # def left(self) -> int:
+#     #     """Возвращает оставшуюся сумму инвестиций в объекте."""
+#     #     return self.model.full_amount - self.model.invested_amount
+
+#     def close(self, db_obj) -> T:
+#         """Закрывает объект как полностью инвестированный."""
+#         db_obj.invested_amount = db_obj.full_amount
+#         db_obj.fully_invested = True
+#         db_obj.close_date = datetime.now()
+
+#     def left(self, db_obj) -> int:
+#         """Возвращает оставшуюся сумму инвестиций в объекте."""
+#         return db_obj.full_amount - db_obj.invested_amount
+
+
+# base_crud = CRUDBase(CommonBase)
