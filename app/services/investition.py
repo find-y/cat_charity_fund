@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.charity_project import CharityProject
@@ -15,15 +17,15 @@ async def invest(new, crud_obj, session: AsyncSession):
         return new
 
     for opened in all_opened:
-        if opened.left() >= new.left():
-            opened.invested_amount += new.left()
-            new.close()
-            if opened.left() == new.left():
-                opened.close()
+        if left(opened) >= left(new):
+            opened.invested_amount += left(new)
+            close(new)
+            if left(opened) == left(new):
+                close(opened)
             break
         else:
-            new.invested_amount += opened.left()
-            opened.close()
+            new.invested_amount += left(opened)
+            close(opened)
 
         session.add(opened)
 
@@ -41,10 +43,22 @@ async def close_fully_invested(
 ) -> CharityProject:
     """Закрывает проект, который набрал полную сумму."""
     if new_full_amount == charity_project.invested_amount:
-        charity_project.close()
+        close(charity_project)
 
         session.add(charity_project)
         await session.commit()
         await session.refresh(charity_project)
 
     return charity_project
+
+
+def left(obj) -> int:
+    """Возвращает оставшуюся сумму инвестиций в проекте."""
+    return obj.full_amount - obj.invested_amount
+
+
+def close(obj) -> None:
+    """Закрывает проект как полностью инвестированный."""
+    obj.invested_amount = obj.full_amount
+    obj.fully_invested = True
+    obj.close_date = datetime.now()
