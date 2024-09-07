@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Type, TypeVar
+from typing import Any, Optional, Type, TypeVar
 
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
