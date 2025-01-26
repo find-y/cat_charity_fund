@@ -13,8 +13,8 @@
 
 ## Шаблон наполнения env-файла
 ```
-APP_TITLE=Кошачий благотворительный фонд
-APP_DESCRIPTION=Сервис для поддержки котиков!
+APP_TITLE=Название благотворительного фонда
+APP_DESCRIPTION=Сервис для поддержки редких видов животных
 DATABASE_URL=sqlite+aiosqlite:///./fastapi.db
 SECRET=secret
 FIRST_SUPERUSER_EMAIL=admin@admin.com
@@ -67,6 +67,6 @@ uvicorn app.main:app --reload
 
 ## API документация
 
-после локального запуска проекта
-http://127.0.0.1:8000/docs
-http://127.0.0.1:8000/redoc
+после локального запуска проекта  
+http://127.0.0.1:8000/docs  
+http://127.0.0.1:8000/redoc  
