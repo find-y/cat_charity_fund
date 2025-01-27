@@ -12,7 +12,7 @@
 
 ## Технологии
 [![Python](https://img.shields.io/badge/python-3-blue)](https://www.python.org/)  
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.78.0-blue?style=for-the-badge)](https://fastapi.tiangolo.com/)  
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.78.0-blue)](https://fastapi.tiangolo.com/)  
 
 ## Шаблон наполнения env-файла
 ```
