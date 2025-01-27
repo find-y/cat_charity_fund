@@ -12,8 +12,12 @@
 
 ## Технологии
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python)](https://www.python.org/)  
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.78.0-blue?logo=FastAPI)](https://fastapi.tiangolo.com/)  
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.78.0-blue?logo=FastAPI?style=for-the-badge)](https://fastapi.tiangolo.com/)  
 [![docker_compose](https://img.shields.io/badge/-Docker%20Compose-464646?logo=docker)](https://docs.docker.com/compose/)  
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.78.0-blue?style=for-the-badge&logo=fastAPI)](https://fastapi.tiangolo.com/) 
+![Static Badge](https://img.shields.io/badge/FastAPI-0.78.0-blue%3Flogo%3DFastAPI?style=for-the-badge)
+
 
 ## Технологии
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python)](https://www.python.org/)
