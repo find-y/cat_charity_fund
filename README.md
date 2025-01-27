@@ -31,7 +31,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.78.0-blue?logo=FastAPI)](https://fastapi.tiangolo.com/)
 [![docker_compose](https://img.shields.io/badge/-Docker%20Compose-464646?logo=docker)](https://docs.docker.com/compose/)
 
-
+</details>
 
 ## Шаблон наполнения env-файла
 ```
