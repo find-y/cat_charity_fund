@@ -10,9 +10,11 @@
 
 Пожертвования в проекты поступают по принципу First In, First Out: все пожертвования идут в проект, открытый раньше других; когда этот проект набирает необходимую сумму и закрывается — пожертвования начинают поступать в следующий проект.
 
-## Технологии
-[![Python](https://img.shields.io/badge/python-3-blue)](https://www.python.org/)  
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.78.0-blue)](https://fastapi.tiangolo.com/)  
+## Технический стек
+Python 3.7.9
+Django 2.2.16
+Django REST framework 3.12.4
+Djoser 2.1.0
 
 ## Шаблон наполнения env-файла
 ```
