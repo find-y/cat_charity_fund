@@ -11,24 +11,15 @@
 Пожертвования в проекты поступают по принципу First In, First Out: все пожертвования идут в проект, открытый раньше других; когда этот проект набирает необходимую сумму и закрывается — пожертвования начинают поступать в следующий проект.
 
 ## Технический стек
-- Python 3.7.9
-- FastAPI 0.78.0
-- Alembic 1.7.7
-- Pydantic 1.9.1
-- Jinja2 3.1.4
-- SQLAlchemy 1.4.36
-- Uvicorn 0.17.6
+- Python
+- FastAPI
+- Alembic
+- Pydantic
+- Jinja2
+- SQLAlchemy
+- Uvicorn
 
-## Шаблон наполнения env-файла
-```
-APP_TITLE=Название благотворительного фонда
-APP_DESCRIPTION=Сервис для поддержки редких видов животных
-DATABASE_URL=sqlite+aiosqlite:///./fastapi.db
-SECRET=secret
-FIRST_SUPERUSER_EMAIL=admin@admin.com
-FIRST_SUPERUSER_PASSWORD=admin
 
-```
 
 ## Запуск проекта
 
