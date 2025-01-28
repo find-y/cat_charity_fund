@@ -32,7 +32,13 @@ FIRST_SUPERUSER_PASSWORD=admin
 
 ## Запуск проекта
 
-- Установите и активируйте виртуальное окружение
+1. Создайте файл .env. По необходимости, внесите свои данные.
+```
+cp env_example .env
+nano .env
+```
+
+2. Установите и активируйте виртуальное окружение
 
 ```
 python3 -m venv venv
@@ -50,12 +56,12 @@ python3 -m venv venv
     source venv/scripts/activate
     ```
 
-- Установите зависимости из файла requirements.txt
+3. Установите зависимости из файла requirements.txt
 ```
 pip install -r requirements.txt
 ``` 
 
-- Создайте базу данных:
+4. Создайте базу данных:
 ```
 alembic revision --autogenerate -m "Initial migration"
 ```
@@ -63,11 +69,11 @@ alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
 ```
 
-- запустите приложение:
+5. Запустите приложение:
 ```
 uvicorn app.main:app
 ```
-режим отлаки:
+- режим отлаки:
 ```
 uvicorn app.main:app --reload
 ```

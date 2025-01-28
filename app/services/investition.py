@@ -17,14 +17,14 @@ async def invest(new, crud_obj, session: AsyncSession):
         return new
 
     for opened in all_opened:
-        if left(opened) >= left(new):
-            opened.invested_amount += left(new)
+        if calc_left_amount(opened) >= calc_left_amount(new):
+            opened.invested_amount += calc_left_amount(new)
             close(new)
-            if left(opened) == left(new):
+            if calc_left_amount(opened) == calc_left_amount(new):
                 close(opened)
             break
         else:
-            new.invested_amount += left(opened)
+            new.invested_amount += calc_left_amount(opened)
             close(opened)
 
         session.add(opened)
@@ -52,7 +52,7 @@ async def close_fully_invested(
     return charity_project
 
 
-def left(obj) -> int:
+def calc_left_amount(obj) -> int:
     """Возвращает оставшуюся сумму инвестиций в проекте."""
     return obj.full_amount - obj.invested_amount
 
